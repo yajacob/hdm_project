@@ -291,8 +291,8 @@ function fnResultDelete() {
 	<div class="alert alert-success" role="alert">
 		<h5><b>Expert's Name:</b> {{ ev.expert_lname }}, {{ ev.expert_fname }} / <a href="mailto:{{ ev.expert_email }}">{{ ev.expert_email }}</a></h5> 
 		<h5><b>Evaluating Date:</b> {{ ev.eval_date }}</h5>
-		<h5><b>Download:</b> <a href="/hdm/result_csv_download/{{ hdm_id }}/{{ ev.expert_no }}"><span class="badge" title="Download CSV file for the response.">CSV</span></a>
-		<a href="/hdm/result_json_download/{{ hdm_id }}/{{ ev.expert_no }}" title="Download JSON file for the response."><span class="badge">JSON</span></a>
+		<h5><b>Download:</b> <a href="/result/csv_download/{{ hdm_id }}/{{ ev.expert_no }}"><span class="badge" title="Download CSV file for the response.">CSV</span></a>
+		<a href="/result/json_download/{{ hdm_id }}/{{ ev.expert_no }}" title="Download JSON file for the response."><span class="badge">JSON</span></a>
 		</h5>
 	</div>
 	<div class="form-group">

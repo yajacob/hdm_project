@@ -42,12 +42,12 @@ function copyURLClipBoard(exp_url){
 				<td>{{ hdm.hdm_criteria }}</td>
 				<td align="center">{{ hdm.cre_date }}</td>
 				<td align='center'>
-					<a href="javascript:copyURLClipBoard('/hdm/expert/{{ hdm.hdm_uuid }}');" target='_new'><span class="label label-info">Copy Url</span></a>
-					<a href='/hdm/expert/{{ hdm.hdm_uuid }}' target='_new'><span class="label label-success">Open Url</span></a>
+					<a href="javascript:copyURLClipBoard('/expert/id/{{ hdm.hdm_uuid }}');" target='_new'><span class="label label-info">Copy Url</span></a>
+					<a href='/expert/id/{{ hdm.hdm_uuid }}' target='_new'><span class="label label-success">Open Url</span></a>
 				</td>
 				<td align='center'>
 				{% if hdm.eval_cnt > 0 %}
-					<a href="/hdm/model_result/{{ hdm.id }}/"><span class="badge">{{ hdm.eval_cnt }}</span></a>
+					<a href="result/{{ hdm.id }}/"><span class="badge">{{ hdm.eval_cnt }}</span></a>
 				{% else %}
 					<span class="badge">{{ hdm.eval_cnt }}</span>
 				{% endif %}

@@ -2,11 +2,11 @@ import os
 import sys
 from django import forms
 sys.path.append( os.path.dirname(os.path.abspath(os.path.dirname(__file__))) )
-from ..models import HDM
+from hdm.models import Hdm
 
-class HDMForm(forms.ModelForm):
+class HdmForm(forms.ModelForm):
     class Meta:
-        model = HDM
+        model = Hdm
         fields = ('hdm_objective', 'hdm_criteria', 'hdm_factors', 'hdm_alternatives',)
 
     # overriding for save method

@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//hdm/forms/signup.py=utf-8
+encoding//hdm/urls/__init__.py=utf-8
+encoding//hdm/urls/api.py=utf-8
+encoding//hdm/urls/auth.py=utf-8
+encoding//hdm/urls/expert.py=utf-8
+encoding//hdm/urls/hdm.py=utf-8
+encoding//hdm/urls/result.py=utf-8
+encoding//hdm/views/auth.py=utf-8

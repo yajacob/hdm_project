@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from bokeh.themes import default
 
-class HDM(models.Model):
+class Hdm(models.Model):
     registrant = models.ForeignKey('auth.User')
     hdm_objective = models.CharField(max_length=200, default="")
     hdm_criteria = models.CharField(max_length=400, default="")

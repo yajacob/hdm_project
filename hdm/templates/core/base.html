@@ -59,7 +59,7 @@ function fnAbout() {
             {% else %}
               <li><a href="/">Home</a></li>
             {% endif %}
-            {% if request.path == '/hdm/model_manage/' or '/hdm/model_view/' in request.path or '/hdm/model_result/' in request.path %}
+            {% if request.path == '/hdm/model_manage/' or '/hdm/model_view/' in request.path or '/result/' in request.path %}
               <li class="active"><a href="/hdm/model_manage/">Manage Model</a></li>
             {% else %}
               <li><a href="/hdm/model_manage/">Manage Model</a></li>

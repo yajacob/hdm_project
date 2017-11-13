@@ -52,7 +52,7 @@ function fnSubmitEvaluation() {
 <input id="hdm_factors" name="hdm_factors" type="hidden" value="{{ hdm.hdm_factors }}">
 <input id="hdm_alternatives" name="hdm_alternatives" type="hidden" value="{{ hdm.hdm_alternatives }}">
 
-<form id="form_expert" name="form_expert" method='POST' action="/hdm/exp_evaluate/">{% csrf_token %}
+<form id="form_expert" name="form_expert" method='POST' action="/expert/evaluate/">{% csrf_token %}
 <input id="uuid" name="uuid" type="hidden" value="{{ uuid }}"> 
 <input id="exp_fname" name="exp_fname" type="hidden" value="{{ req_post.exp_fname }}"> 
 <input id="exp_lname" name="exp_lname" type="hidden" value="{{ req_post.exp_lname }}"> 

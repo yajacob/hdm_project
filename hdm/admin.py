@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import HDM
+from hdm.models import Hdm
 
-admin.site.register(HDM)
+admin.site.register(Hdm)
