@@ -1,0 +1,6 @@
+{"object":"Test Project",
+"Criteria":[{"CR1":{"CR11":"Factor11", "CR12":"Fcator12", "CR13":"Factor13"}},
+	{"CR2":{"CR21":"Factor21", "CR22":"Fcator22", "CR23":"Factor23"}},
+	{"CR3":{"CR31":"Factor31", "CR32":"Fcator32"}},
+	{"CR4":{"CR41":"Factor41", "CR42":"Fcator42", "CR43":"Factor43", "CR44":"Factor44"}}]
+}

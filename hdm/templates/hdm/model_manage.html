@@ -1,0 +1,61 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<script>
+function copyURLClipBoard(exp_url){
+	url = "http://127.0.0.1:8000" + exp_url; 
+	copyClipBoard(url);
+}
+</script>
+<ul class="nav nav-tabs">
+  <li id="tab1" role="presentation" class="active"><a href="#">Model List</a></li>
+  <li id="tab2" role="presentation"><a href="/hdm/model_view/">Model Design</a></li>
+</ul>
+<div style="padding:10px;"></div>
+<div class="panel panel-danger">
+	<div class="panel-heading">HDM Design List</div>
+	<table class="table table-hover">
+		<thead>
+			<tr class="active">
+				<th width="5%">#</th>
+				{% if request.user.is_staff %}
+				<th width="10%">User</th>
+				<th width="25%">Objective (View Model)</th>
+				<th width="25%">Criteria</th>
+				{% else %}
+				<th width="30%">Objective (View Model)</th>
+				<th width="30%">Criteria</th>
+				{% endif %}
+				<th width="15%">Created Date</th>
+				<th width="15%" align='center' style="color:#a94442;"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> For Experts</th>
+				<th width="5%">Resp.</th>
+			</tr>
+		</thead>
+		<tbody>
+    {% for hdm in hdm_list %}
+			<tr>
+				<th scope="row" align='center'>{{ hdm.id }}</th>
+				{% if request.user.is_staff %}
+				<td align="center">{{ hdm.user_id }}</td>
+				{% endif %}
+				<td><a href="/hdm/model_view/{{ hdm.id }}">{{ hdm.hdm_objective }}</a></td>
+				<td>{{ hdm.hdm_criteria }}</td>
+				<td align="center">{{ hdm.cre_date }}</td>
+				<td align='center'>
+					<a href="javascript:copyURLClipBoard('/hdm/expert/{{ hdm.hdm_uuid }}');" target='_new'><span class="label label-info">Copy Url</span></a>
+					<a href='/hdm/expert/{{ hdm.hdm_uuid }}' target='_new'><span class="label label-success">Open Url</span></a>
+				</td>
+				<td align='center'>
+				{% if hdm.eval_cnt > 0 %}
+					<a href="/hdm/model_result/{{ hdm.id }}/"><span class="badge">{{ hdm.eval_cnt }}</span></a>
+				{% else %}
+					<span class="badge">{{ hdm.eval_cnt }}</span>
+				{% endif %}
+				</td>
+			</tr>
+    {% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock content %}
+

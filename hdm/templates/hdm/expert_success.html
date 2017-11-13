@@ -1,0 +1,21 @@
+{% extends 'core/base_expert.html' %}
+
+{% block content %}
+<div class="col-md-4 col-md-offset-4">
+    <div class="login-panel panel panel-danger" style="margin-top:50px;">
+        <div class="panel-heading">
+            <h3 class="panel-title">Thank you!</h3>
+        </div>
+        <div class="panel-body">
+{% if result == "ALREADY" %}
+        <h3>Thank you, but you have already participated in this evaluation.</h3>
+{% else %}
+        <h4>Thank you for your evaluation.</h4>
+{% endif %}
+        <!-- <h4>If you have any question, please contact {{ designer.fname }} {{ designer.lname }} (<a hef="tomail:{{ email }}">{{ designer.email }}</a>) </h4>
+         -->
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

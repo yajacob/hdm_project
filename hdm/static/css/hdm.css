@@ -1,0 +1,65 @@
+.cr_div {
+	display:none;
+}
+
+input.w400 { width:400px; margin-bottom:20px;}
+input.w600 { width:600px; margin-bottom:20px;}
+.td_eval { width:50%; font-weight:bold; color:#a94442; }
+input.slidebar {width:20px; font-size:14px; border-width:0px;}
+th { text-align:center; font-weight:bold; }
+
+/* For JSON Diagram */
+/* required LIB STYLES */
+/* .Treant se automatski dodaje na svaki chart conatiner */
+.Treant { position: relative; overflow: hidden; padding: 0 !important; }
+.Treant > .node,
+.Treant > .pseudo { position: absolute; display: block; visibility: hidden; }
+.Treant.loaded .node,
+.Treant.loaded .pseudo { visibility: visible; }
+.Treant > .pseudo { width: 0; height: 0; border: none; padding: 0; }
+.Treant .collapse-switch { width: 3px; height: 3px; display: block; border: 1px solid black; position: absolute; top: 1px; right: 1px; cursor: pointer; }
+.Treant .collapsed .collapse-switch { background-color: #868DEE; }
+.Treant > .node img {	border: none; float: left; }
+
+/* optional Container STYLES */
+.div_main { width: 100%; height:auto; min-height:400px; overflow:auto; background-color: #eee; border-radius: 6px;}
+.chart { height: 530px; margin: 5px; width: 100%;}
+.Treant > .node {  }
+.Treant > p { font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; font-weight: bold; font-size: 12px; }
+.node-name { font-weight: bold; font-size: 14px;}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.nodeHDM {
+    padding: 10px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    border: 1px solid #000;
+    width: 195px;
+    font-family: Tahoma;
+    font-size: 11px;
+}
+
+.nodeHDM img {
+    margin-right:  10px;
+}
+
+.nodeHDM p {
+	margin: 0 0 0px;
+}
+
+#CR00 {width:300px; text-align:center; background-color: #ffb299}
+#CR10 {text-align:center; background-color: #d9edf7}
+#CR20 {text-align:center; background-color: #d9edf7}
+#CR30 {text-align:center; background-color: #d9edf7}
+#CR40 {text-align:center; background-color: #d9edf7}
+#CR50 {text-align:center; background-color: #d9edf7}
+#CR60 {text-align:center; background-color: #d9edf7}
+#CR70 {text-align:center; background-color: #d9edf7}
+#CR80 {text-align:center; background-color: #d9edf7}

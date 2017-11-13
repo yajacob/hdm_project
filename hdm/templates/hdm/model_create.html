@@ -1,0 +1,231 @@
+{% extends 'core/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<!-- link rel="stylesheet" href="{% static 'css/fileinput.min.css' %}" type="text/css" / -->
+<!-- script src="{% static 'js/fileinput.min.js' %}" type="text/javascript"></script -->
+<script type='text/javascript'>
+// after transmitting the file, callback function
+function FileuploadCallback(data,state){
+	if (data=="error"){
+		alert("Error: try it again!");
+		return false;
+	}
+	alert("Success.");
+}
+
+$(function(){
+	// asynchronous file upload
+	var frm=$('#csv_form'); 
+	frm.ajaxForm(FileuploadCallback); 
+	frm.submit(function(){return false; }); 
+});
+
+// File upload event
+function FileUpload() {
+	alert("Sorry...\n\nThis function is under development!");
+	return;
+	
+	if(!$("#upload_file").val()){
+		alert("Choose File.");
+		$("#upload_file").focus();
+		return;
+	}
+	// file transmitting
+	var frm = $('#csv_form'); 
+	frm.attr("action","/hdm/uploadcsvfile");
+	frm.submit(); 
+}
+
+function fnSetCriteriaNo() {
+	var criteria_no = $("#criteria_no").val();
+
+	if(criteria_no < 1) {
+		return;
+	}
+
+	for(i=1; i <= 8; i++) {
+		$("#cr"+i).hide();
+	}
+	
+	$("#criteria_group1").show();
+	if(criteria_no > 4)
+		$("#criteria_group2").show();
+
+	for(i=1; i <= criteria_no; i++) {
+		$("#cr"+i).show();
+	}
+}
+
+function fnAddFactors() {
+	var objective = $("#hdm_objective").val().trim();
+	var criteria = $("#hdm_criteria").val().trim();
+	if(objective == "") {
+		alert("Please input the model's objective~!");
+		return;
+	}
+	if(criteria == "") {
+		alert("Please input the model's criteria~!");
+		return;
+	}
+	
+	var arr_criteria = criteria.split(",");
+	$(".div_factors").hide();
+	
+	// remove duplication
+	var arr_criteria = arr_criteria.reduce(function(a,b){
+		if (a.indexOf(b) < 0 ) a.push(b);
+		return a;
+	  },[]);
+	
+	var hdm_criteria_count = 0;
+	for(i=0, j=1; i<arr_criteria.length; i++) {
+		if(arr_criteria[i].trim() == "") continue;
+		
+		$("#label_fector"+j).text("Factors #"+j+": "+arr_criteria[i].trim());
+		$("#div_factor"+j).show();
+		j++;
+		hdm_criteria_count = j;
+	}
+	$("#hdm_criteria_count").val(hdm_criteria_count);
+	$("#hdm_objective").val()
+	$("#form_factors").show();
+	$("#form_alternatives").show();	
+}
+
+function fnTest() {
+	$("#hdm_objective").val("Buy MP3 Player");
+	$("#hdm_criteria").val("Color, Memory, Delivery");
+	fnAddFactors();
+	$("#hdm_factor1").val("Pink, Blue, Yellow");
+	$("#hdm_factor2").val("16GB, 32GB, 64GB, 128GB");
+	$("#hdm_factor3").val("USPS, UPS, FedEx");
+	$("#hdm_alternatives").val("Model 1, Model 2, Model 3, Model 4");
+}
+
+function fnSubmit() {
+	var frm = $("#hdm_form"); 
+	var hdm_objective = $("#hdm_objective").val();
+	var hdm_criteria  = $("#hdm_criteria").val();
+	var hdm_factors   = "";
+	var hdm_alternatives = $("#hdm_alternatives").val();
+	var hdm_criteria_count =  $("#hdm_criteria_count").val();
+	for(i=1; i <= hdm_criteria_count; i++) {
+		if(i>1) hdm_factors += "|";
+		hdm_factors += $("#hdm_factor"+i).val();
+	}
+	$("#hdm_factors").val(hdm_factors);
+	frm.submit();
+}
+
+function fnUpload() {
+	alert("Sorry... It's under construction.");
+	return;
+
+	var frm = $("#csv_form"); 
+	frm.submit();
+}
+
+function fnActiveTab(tab_id) {
+	$("#tab1").removeClass("active");
+	$("#tab2").removeClass("active");
+	$("#tab"+tab_id).toggleClass("active");
+	if(tab_id == 1) {
+		$("#hdm_form").show();
+		$("#csv_form").hide();
+	}
+	else {
+		$("#hdm_form").hide();
+		$("#csv_form").show();
+	}
+}
+
+//initialize with defaults
+$("#upload_file").fileinput();
+
+// with plugin options
+$("#upload_file").fileinput({'showUpload':false, 'previewFileType':'any'});
+</script>
+
+<ul class="nav nav-tabs">
+  <li id="tab1" role="presentation" class="active"><a href="javascript:fnActiveTab(1);">Manual Design</a></li>
+  <li id="tab2" role="presentation"><a href="javascript:fnActiveTab(2);">Upload CSV</a></li>
+</ul>
+
+<form name='hdm_form' id='hdm_form' method='POST'>{% csrf_token %}
+<!--a href="javascript:fnTest()">test</a-->
+<input type="hidden" id="hdm_text" name="hmd_text">
+<input type="hidden" id="hdm_criteria_count" name="hdm_criteria_count">
+<input type="hidden" id="hdm_factors" name="hdm_factors">
+  
+<div class="input" id="form_criteria" style="padding-top:20px;">
+	<div class="panel panel-danger">
+	  <div class="panel-heading">
+	  	<h3 class="panel-title"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> Basic Model Information</h3>
+	  </div>
+	  <div class="panel-body" style="padding:20px 0 20px 40px;">
+	  	<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+	    <label for="hdm_criteria"> Objective</label>
+	    <input class="form-control w600" id="hdm_objective" name="hdm_objective" type="text" placeholder="ex) Buy MP3 Player" title="Type your objective(Layer1) for the model.">
+
+	  	<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+	    <label for="hdm_criteria">Criteria</label>
+	    <input class="form-control w600" id="hdm_criteria" name="hdm_criteria" type="text" placeholder="ex) Color, Memory, Delivery" title="Type your criteria(Layer2) seperated with a comma(delimiter).">
+
+	    <div style="padding: 10px 0 0 80px;">
+			<button type="button" class="btn btn-danger" onClick="fnAddFactors();">Add Factors</button>
+		</div>
+	  </div>
+	</div>
+
+	<div class="panel panel-info" id="form_factors" style="display:none;">
+	  <div class="panel-heading">
+	  	<h3 class="panel-title"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+	  	Factors' Information</h3>
+	  </div>
+	  <div class="panel-body" style="padding:20px 0 20px 40px;">
+{% for i in range12 %}
+	<div class="div_factors" id="div_factor{{ i }}">
+	  	<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+		<label id="label_fector{{ i }}" for="hdm_factor{{ i }}">Factor(Sub-Criteria) #{{ i }}</label>
+		{% if i == 1 %}
+	    <input class="form-control w600" id="hdm_factor{{ i }}" name="hdm_factor{{ i }}" type="text" placeholder="ex) Pink, Blue, Yellow" title="Type your factors(Layer3) seperated with a comma()delimiter.">
+	    {% else %}
+	    <input class="form-control w600" id="hdm_factor{{ i }}" name="hdm_factor{{ i }}" type="text" title="Type your factors(Layer3) seperated with a comma(delimiter).">
+	    {% endif %}
+    </div>
+{% endfor %}
+	  </div>
+	</div>
+	
+	<div class="panel panel-success" id="form_alternatives" style="display:none;">
+	  <div class="panel-heading">
+	  	<h3 class="panel-title"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>
+		Alternatives & Submit</h3>
+	  </div>
+	  <div class="panel-body" style="padding:20px 0 20px 40px;">
+	  	<span class="glyphicon glyphicon-equalizer" aria-hidden="true"></span>
+	    <label for="hdm_alternatives">Alternatives</label>
+	    <input class="form-control w600" id="hdm_alternatives" name="hdm_alternatives" type="text" placeholder="ex) Samsung, LG, iRiver, Apple" title="Type your alternatives seperated with a comma(delimiter).">
+	    <div style="padding: 10px 0 0 80px;">
+			<button type="button" class="btn btn-success" onClick="fnSubmit();"> Submit </button>
+		</div>
+	  </div>
+	</div>
+</div>
+</form>
+<form name='csv_form' id='csv_form' method='POST' action="/hdm/uploadcsvfile" style="display:none; padding-top:20px;" enctype="multipart/form-data">{% csrf_token %}
+<div class="panel panel-success" id="form_fileupload">
+  <div class="panel-heading">
+  	<h3 class="panel-title"><span class="glyphicon glyphicon-open-file" aria-hidden="true"></span>
+  	&nbsp;&nbsp;Upload CSV for New Model</h3>
+  </div>
+  <div class="panel-body" style="padding:20px 40px 20px 40px;">
+  Example csv file >> <a href="{% static 'data/model_sample.csv' %}">Download</a><br> <br>
+<label class="control-label">Select File</label>
+<input id="upload_file" name="upload_file" type="file" class="file"><br>
+<button type="button" class="btn btn-success" onClick="fnUpload();"> Submit </button>
+  </div>
+</div>
+</form>
+{% endblock content %}

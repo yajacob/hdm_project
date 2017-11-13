@@ -1,0 +1,97 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>PSU ETM / HDM (Hierarchical Decision Model)</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="{% static 'images/favicon/ms-icon-144x144.png' %}">
+	<meta name="theme-color" content="#ffffff">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="{% static 'css/hdm.css' %}">
+	<link rel="stylesheet" href="{% static 'css/ion.rangeSlider.css' %}">
+	<link rel="stylesheet" href="{% static 'css/ion.rangeSlider.skinHTML5.css' %}">
+	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+	<script src="{% static 'js/hdm_expert.js' %}" type="text/javascript"></script>
+	<script src="{% static 'js/ion.rangeSlider.min.js' %}" type="text/javascript"></script>
+	<link rel="apple-touch-icon" sizes="57x57" href="{% static 'images/favicon/apple-icon-57x57.png' %}">
+	<link rel="apple-touch-icon" sizes="60x60" href="{% static 'images/favicon/apple-icon-60x60.png' %}">
+	<link rel="apple-touch-icon" sizes="72x72" href="{% static 'images/favicon/apple-icon-72x72.png' %}">
+	<link rel="apple-touch-icon" sizes="76x76" href="{% static 'images/favicon/apple-icon-76x76.png' %}">
+	<link rel="apple-touch-icon" sizes="114x114" href="{% static 'images/favicon/apple-icon-114x114.png' %}">
+	<link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/favicon/apple-icon-120x120.png' %}">
+	<link rel="apple-touch-icon" sizes="144x144" href="{% static 'images/favicon/apple-icon-144x144.png' %}">
+	<link rel="apple-touch-icon" sizes="152x152" href="{% static 'images/favicon/apple-icon-152x152.png' %}">
+	<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon/apple-icon-180x180.png' %}">
+	<link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicon/android-icon-192x192.png' %}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon/favicon-32x32.png' %}">
+	<link rel="icon" type="image/png" sizes="96x96" href="{% static 'images/favicon/favicon-96x96.png' %}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon/favicon-16x16.png' %}">
+	<link rel="manifest" href="{% static 'images/favicon/manifest.json' %}">
+</head>
+<script language="javascript">
+function fnHowTo() {
+	alert('Just click item what you want to evaluate!');	
+}
+
+function fnAbout() {
+	alert("HDM Designer\n\nVersion: 0.1\n\nAuthor: Jacob K. Yang\n\nBuild time: May 2017");
+}
+</script>
+<body>
+    <div class="container">
+
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"><font color="#003366"><span class="glyphicon glyphicon-random" aria-hidden="true"></span>
+            &nbsp;HDM Designer</font> (Hierarchical Decision Model) / <font color="#d9534f">EVALUATION for EXPERTS</font></a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Help <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="javascript:fnHowTo();"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> How to...</a></li>
+                  <li><a href="#"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Manual</a></li>
+                  <li><a href="#"><span class="glyphicon glyphicon-link" aria-hidden="true"></span> Links</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li class="dropdown-header"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> PSU</li>
+                  <li><a href="https://www.pdx.edu/" target="_psu"><span class="glyphicon glyphicon-tower" aria-hidden="true"></span> PSU</a></li>
+                  <li><a href="https://www.pdx.edu/engineering-technology-management/" target="_etm"><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> ETM</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="javascript:fnAbout();"><span class="glyphicon glyphicon-random" aria-hidden="true"></span> About HDM Designer</a></li>
+                </ul>
+              </li>
+              <li><a href="/" target="_hdm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Create Your HDM</a></li>
+            </ul>
+{% if ds %}
+            <ul class="nav navbar-nav navbar-right">
+              <li style="margin-right:20px;"><button type="button" class="btn btn-xs btn-warning" onClick="fnRestartEvaluation();" style="margin-top:13px;">Restart</button></li>
+              <li style="margin-right:30px;"><button type="button" class="btn btn-danger" onClick="fnSubmitEvaluation();" style="margin-top:8px;">Submit</button></li>
+            </ul>
+{% endif %}
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+
+<!-- Main component for a primary marketing message or call to action -->
+	<div class="container>">
+         {% block content %}
+         {% endblock %}
+	</div>
+
+    </div> <!-- /container -->
+	<!-- Latest compiled and minified JavaScript -->
+    <script src="{% static 'js/bootstrap.min.js' %}" type="text/javascript"></script>
+</body>
+</html>

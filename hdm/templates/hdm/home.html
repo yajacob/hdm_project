@@ -1,0 +1,118 @@
+{% extends 'core/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<script>
+function fnSubmit() {
+	var re_email = /\S+@\S+\.\S+/;
+	   
+	var tform = $("#form_signup");
+	if $("#id_password1").val() <> $("#id_password2").val() {
+		alert("Your password #1 and password #2 is different!");
+		return;
+	}
+	
+	if(!re_email.test(email)) {
+		alert("Check your email address!");
+		return;
+	}
+	
+	tform.submit();
+}
+
+function validateEmail(email) 
+{
+    return re.test(email);
+}
+</script>
+<div class="row">
+	<div class="d-md-flex flex-items-center gut-lg">
+      <div class="col-md-7 text-md-left">
+        <h1 class="alt-h0 text-white lh-condensed-ultra mb-3"><img src="{% static 'images/hdm-logo.png' %}" width="40"> HDM Desinger</h1>
+        <h2>Build Your Own Model</h2>
+        <p class="alt-lead mb-4" style="font-size:16px;">
+			HDM Designer is a powerful tool for decision-making based on hierarchical decision model.
+			HDM is a method of multi-criteria evaluation which organizes and simplifies decision-making by pairwise comparison.
+			Use HDM Designer for your complex and tough decision problems.
+        </p><br>
+        <img src="/static/images/hdm_home.png" style="width:100%">
+      </div>
+      <div class="mx-auto col-sm-8 col-md-5 hide-sm Box bg-gray-light pt-4 pb-5">
+{% if user.is_authenticated %}
+			<div class="panel panel-danger">
+				<div class="panel-heading">Welcome <b>{{ request.user.username }}</b></div>
+				<div class="panel-body">
+				Welcome message...
+				</div>
+			</div>
+			<div class="panel panel-info">
+				<div class="panel-heading">Your HDM Design(s)</div>
+				<div class="panel-body">
+	<table class="table table-hover">
+		<thead>
+			<tr class="active">
+				<th width="65%">Objective</th>
+				<th width="25%">Date</th>
+				<th width="10%" align='center'>Resp.</th>
+			</tr>
+		</thead>
+		<tbody>
+{% if hdm_list %}
+    {% for hdm in hdm_list %}
+			<tr>
+				<td><a href="/hdm/model_view/{{ hdm.id }}/">{{ hdm.hdm_objective }}</a></td>
+				<td>{{ hdm.cre_date }}</td>
+				<td align='center'><span class="badge">{{ hdm.eval_cnt }}</span></td>
+			</tr>
+    {% endfor %}
+{% else %}
+			<tr>
+				<td colspan="3" style="height:100px; text-align:center; vertical-align:middle;"><h4>Create your new HDM!</h4></td>
+			</tr>
+{% endif %}
+		</tbody>
+	</table>
+				</div>
+			</div>
+{% else %}
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h4 class="hs_cos_wrapper form-title" data-hs-cos-general-type="widget_field" data-hs-cos-type="text">
+					Sign Up for Free HDM Designer</h4>
+				</div>
+				<div class="panel-body">
+		<form method="post" id="form_signup" action="/accounts/signup/"style="padding:0 40px 0 40px;">{% csrf_token %}
+				<p>
+				<label for="id_username">Username:</label><br>
+				<input autofocus="" id="id_username" maxlength="150" name="username" type="text" required="" title="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.">
+				</p>
+				<p>
+				<label for="id_first_name">First name:</label><br>
+				<input id="id_first_name" maxlength="30" name="first_name" type="text">
+				</p>
+				<p>
+				<label for="id_last_name">Last name:</label><br>
+				<input id="id_last_name" maxlength="30" name="last_name" type="text">
+				</p>
+				<p>
+				<label for="id_email">Email:</label><br>
+				<input id="id_email" name="email" type="email" required="">
+				</p>
+				<p>
+				<label for="id_password1">Password:</label><br>
+				<input id="id_password1" name="password1" type="password" required="">
+				</p>
+				<p>
+				<label for="id_password2">Password confirmation:</label><br>
+				<input id="id_password2" name="password2" type="password" required="" title="Enter the same password as before, for verification.">
+				</p>
+			<button class="btn btn-primary btn-large f4 btn-block" type="submit" style="margin:20px 0 10px 0">Submit for Sign Up</button>
+		</form>			
+				</div>
+			</div>
+{% endif %}
+		</div>
+    </div>
+</div>
+
+{% endblock content %}

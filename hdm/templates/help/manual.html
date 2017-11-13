@@ -1,0 +1,113 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="row">
+	<div class="d-md-flex flex-items-center gut-lg">
+		<div class="col-12 col-md-3 col-xl-2 bd-sidebar" style="background:#dddddd; padding:20px 0 0 40px;">
+		<nav class="bd-links" id="bd-docs-nav">
+		  <div class="bd-toc-item active">
+		      <a class="bd-toc-link" href="#getting_started">
+		        + Getting started
+		      </a>
+		      <ul class="nav bd-sidenav">
+		          <li class="active bd-sidenav-active">
+		            <a href="#introduction">
+		              Introduction
+		            </a>
+		          </li>
+		          <li class="">
+		            <a href="#hdm">
+		              HDM
+		            </a>
+		          </li>		        
+		      </ul>
+		    </div>
+		  <div class="bd-toc-item ">
+		      <a class="bd-toc-link" href="#create_model">
+		        + Create Model
+		      </a>		
+		      <ul class="nav bd-sidenav">
+		          <li class="">
+		            <a href="#manual_design">
+		              Manual Design
+		            </a>
+		          </li>
+		          <li class="">
+		            <a href="#upload_csv">
+		              Upload CSV
+		            </a>
+		          </li>
+		      </ul>
+		    </div>
+		  <div class="bd-toc-item ">
+		      <a class="bd-toc-link" href="#manage_model">
+		        + Manage Model
+		      </a>
+		      <ul class="nav bd-sidenav">
+		          <li class="">
+		            <a href="#model_list">
+		              Model List
+		            </a>
+		          </li>
+		          <li class="">
+		            <a href="#model_design">
+		              Model Design
+		            </a>
+		          </li>
+		        
+		      </ul>
+		    </div>
+		  <div class="bd-toc-item ">
+		      <a class="bd-toc-link" href="#model_analysis">
+		        + Model Analysis
+		      </a>
+		      <ul class="nav bd-sidenav">
+		          <li class="">
+		            <a href="#anal_total">
+		              Analysis Total
+		            </a>
+
+		          </li>
+		          <li class="">
+		            <a href="#anal_individual">
+		              Analysis Individual
+		            </a>
+		          </li>
+		      </ul>
+		    </div>
+		</nav>
+		</div>
+		<main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 bd-content" role="main">
+	        <h1 id="introduction">Introduction</h1>
+	        <p class="alt-lead mb-4" style="font-size:16px;">
+				HDM Designer is a powerful tool for decision-making based on hierarchical decision model.
+				HDM is a method of multi-criteria evaluation which organizes and simplifies decision-making by pairwise comparison.
+				Use HDM Designer for your complex and tough decision problems.
+	        </p><br>
+	        <img src="/static/images/hdm_home.png" style="width:60%">
+	
+	        <h2 id="#hdm">HDM</h2>
+	        <p class="alt-lead mb-4" style="font-size:16px;">
+				HDM (Hierarchical Decision Modeling) was developed by Dundar Kocaoglu in 1976. It
+consists of the following steps:<br>
+<br>
+ 1. Design and verification of the decision hierarchy for strategic management decisions<br>
+ 2. Formation of Expert Panels<br>
+ 3. Quantification of expert judgments by using pairwise comparisons among decision elements by constant sum (CS), direct ratio (DR) or absolute value (AV) methods for
+ data input.<br>
+ 4. Development of Desirability Functions for the characterization of decision alternatives<br>
+ 5. Calculation and reconciliation of decision inconsistencies for each expert<br>
+ 6. Calculation and reconciliation of disagreements among the experts<br>
+ 7. Aggregation of the computations to determine the relative value of each decision alternative in terms of its combined impacts on the top level of the hierarchy<br>
+ 8. Sensitivity analysis to determine the effect of changing priorities and expert opinions<br>
+ 9. Validation of the results by independent experts.<br>
+	        </p><br>
+
+	        <h2 id="#create_model">Create Model</h2>
+	        <p class="alt-lead mb-4" style="font-size:16px;">
+	        </p><br>
+		</main>
+    </div>
+</div>
+
+{% endblock content %}

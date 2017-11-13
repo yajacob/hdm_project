@@ -1,0 +1,111 @@
+{% extends 'core/base_expert.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<script src="{% static 'js/raphael.js' %}"></script>
+<script src="{% static 'js/Treant.js' %}"></script>
+<script>
+{{ ds|safe }}
+</script>
+{% if message == "ALREADY" %}
+<div class="alert alert-warning alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Warning!</strong> You have already participated in this evaluation. When you submit it, the old one will be ignored.
+</div>
+{% endif %}
+<div class="chart" id="DiagramHDM1"></div>
+<script>
+	new Treant(ALTERNATIVE);
+</script>
+<script>
+function fnSubmitEvaluation() {
+	$.fn.reverse = [].reverse;
+	var done_flag = true;
+	$('.nodeHDM').reverse().each(function () { 
+		if(!$(this).hasClass("disabled")) {
+			var node_name = "";
+			node_name = $(this).children('.node-name').text(),
+			alert("You must finish following item: " + node_name);
+			done_flag = false;
+			return false;
+		}
+	});
+
+	if(done_flag) {
+		tform = $("#form_expert");
+		tform.submit();
+	}
+}
+</script>
+<div class="panel panel-info">
+  <div class="panel-heading"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span> <b>Alternatives</b></div>
+  <div class="panel-body" style="text-align:center;">
+    {% for al in hdm_al %}
+		<button type="button" class="btn btn-success" style="width:180px; margin:10px; cursor:not-allowed;">{{ al }}</button>
+    {% endfor %}
+  </div>
+</div>
+
+<input id="cur_eval_item" name="cur_eval_item" type="hidden"> 
+<input id="cur_eval_item_cnt" name="cur_eval_item_cnt" type="hidden"> 
+<input id="hdm_criteria" name="hdm_criteria" type="hidden" value="{{ hdm.hdm_criteria }}">
+<input id="hdm_factors" name="hdm_factors" type="hidden" value="{{ hdm.hdm_factors }}">
+<input id="hdm_alternatives" name="hdm_alternatives" type="hidden" value="{{ hdm.hdm_alternatives }}">
+
+<form id="form_expert" name="form_expert" method='POST' action="/hdm/exp_evaluate/">{% csrf_token %}
+<input id="uuid" name="uuid" type="hidden" value="{{ uuid }}"> 
+<input id="exp_fname" name="exp_fname" type="hidden" value="{{ req_post.exp_fname }}"> 
+<input id="exp_lname" name="exp_lname" type="hidden" value="{{ req_post.exp_lname }}"> 
+<input id="exp_email" name="exp_email" type="hidden" value="{{ req_post.exp_email }}"> 
+<input type="hidden" id="eval_cr" name="eval_cr">
+<input type="hidden" id="eval_fa" name="eval_fa">
+<input type="hidden" id="eval_al" name="eval_al">
+</form>
+<!-- Modal -->
+<div id="sbModal" class="modal fade" role="dialog" style="margin-top:150px;">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header success">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" style="color:#d9534f; font-weight:bold;"><span class="glyphicon glyphicon-sort-by-order" aria-hidden="true"></span> <span id="eval_title">Evaluation</span></h4>
+      </div>
+      <div class="modal-body" style="height:auto;min-height: 300px; overflow: auto;">
+		<!-- show slide bar -->
+{% for i in range28 %}
+		<div id="div_eval{{ i }}" class="col-xs-6 div_eval" style="height:130px;">
+			<table width="100%" height="45">
+				<tr><td class="td_eval" id="td_ls_item{{ i }}">Eval #1</td>
+				<td class="td_eval" align="right" id="td_rs_item{{ i }}">Eval #2</td></tr></table>
+			<table width="100%" height="85">
+			<tr>
+				<td width="10%"><input type="text" class="slidebar" id="ls_range{{ i }}" data-code="CR" value="50" readonly></td>
+				<td width="80%"><input class="eval_slide" id="slide{{ i }}" type="range" min="1" max="99" data-group="CR" value="50" step="1" onchange="showValue({{ i }}, this.value)" style="width:100%"/></td>
+				<td width="10%" style='text-align:right;'>
+					<input type="text" class="slidebar" id="rs_range{{ i }}" data-code="CR" value="50" readonly></td>
+			</tr></table>			
+		</div>
+{% endfor %}
+<script>
+//$(".eval_slide").ionRangeSlider();
+$(".eval_slide").ionRangeSlider({
+    grid: true,
+    min: 1,
+    max: 99,
+    postfix: "%"
+});
+</script>
+		<div class="col-xs-12" style="text-align:center; margin:20px 0 0px 0;">
+			<button type="button" class="btn btn-danger" onClick="fnSave();">Save</button>
+		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock content %}

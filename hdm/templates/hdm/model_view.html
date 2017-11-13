@@ -1,0 +1,65 @@
+{% extends 'core/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<script src="{% static 'js/raphael.js' %}"></script>
+<script src="{% static 'js/Treant.js' %}"></script>
+<script>
+{{ ds|safe }}
+</script>
+<script>
+function fnEvalModel() {
+	var eval_url = "/hdm/expert/{{ hdm.hdm_uuid }}/";
+	window.open(eval_url);
+}
+
+function fnModifyModel() {
+	location.href = "/hdm/model_update/{{ hdm.hdm_id }}/";	
+}
+
+function fnDeleteModel() {
+	var warn = confirm("Do you reall want to delete this model?\n\nEvaluation will be deleted together.");
+	if (warn == true) {
+		location.href = "/hdm/model_delete/{{ hdm.hdm_uuid }}/";
+	}
+}
+
+function fnViewDiagram() {
+	var diagram_url = "/hdm/model_diagram/{{ hdm.hdm_id }}/";
+	window.open(diagram_url);
+}
+</script>
+
+<ul class="nav nav-tabs">
+  <li id="tab1" role="presentation"><a href="/hdm/model_manage/">Model List</a></li>
+  <li id="tab2" role="presentation" class="active"><a href="#">Model Design</a></li>
+{% if eval_cnt > 0 %}
+  <li id="tab3" role="presentation"><a href="/hdm/model_result/{{ hdm.hdm_id }}/" title="{{ eval_cnt }} response(s) from the experts.">Model Result <span class="badge">{{ eval_cnt }}</span></a></li>
+{% else %}
+  <li id="tab3" role="presentation"><a href="#" title="No response from the experts yet.">Model Result <span class="badge">{{ eval_cnt }}</span></a></li>
+{% endif %}
+</ul>
+
+<div class="panel-body" style="padding:0px; text-align:right;">
+<button type="button" class="btn btn-xs btn-danger" onclick="fnDeleteModel();" style="margin-top:13px;">Delete Model</button>
+<button type="button" class="btn btn-info" style="width:180px; margin:10px;" onclick="fnViewDiagram()">View Diagram</button>
+<button type="button" class="btn btn-warning" style="width:180px; margin:10px;" onclick="fnEvalModel()">Evaluate Model</button>
+<button type="button" class="btn btn-danger" style="margin-left:40px; width:180px; margin:10px;" onclick="fnModifyModel()">Modify Model</button>
+</div>
+
+<div class="chart" id="DiagramHDM1"></div>
+<script>
+$(document).ready(function() {
+	new Treant(ALTERNATIVE);
+})
+</script>
+<div class="panel panel-info">
+  <div class="panel-heading"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span> <b>Alternatives</b></div>
+  <div class="panel-body" style="text-align:center;">
+    {% for al in hdm_al %}
+		<button type="button" class="btn btn-success" style="width:180px; margin:10px;">{{ al }}</button>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock content %}

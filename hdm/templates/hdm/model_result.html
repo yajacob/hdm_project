@@ -1,0 +1,349 @@
+{% extends 'core/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+function fnActiveTab(id) {
+	$(".ev_tab").removeClass("active");
+	$("#ev_tab"+id).addClass("active");
+	$(".div_eval").hide();
+	$("#div_eval"+id).show();
+}
+
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart_cr0);
+google.charts.setOnLoadCallback(drawChart_al0);
+{% for ev in eval_list %}
+google.charts.setOnLoadCallback(drawChart_cr{{ forloop.counter }});
+google.charts.setOnLoadCallback(drawChart_al{{ forloop.counter }});
+{% endfor %}
+
+//Main Criteria chart
+function drawChart_cr0() {
+	// Create the data table.
+	var data = new google.visualization.DataTable();
+	data.addColumn('string', 'Topping');
+	data.addColumn('number', 'Slices');
+	data.addRows({{ main_chart_cr|safe }});
+	
+	var options = {
+		chartArea:{left:0,top:0,width:400,height:300}
+	};
+	
+	var chart = new google.visualization.PieChart(document.getElementById('piechart_cr0'));
+	chart.draw(data, options);
+}
+
+// Main Alternatives chart
+function drawChart_al0() {
+	// Create the data table.
+	var data = new google.visualization.DataTable();
+	data.addColumn('string', 'Topping');
+	data.addColumn('number', 'Slices');
+	data.addRows({{ main_chart_al|safe }});
+	
+	var options = {
+		chartArea:{left:0,top:0,width:400,height:300}
+	};
+	
+	var chart = new google.visualization.PieChart(document.getElementById('piechart_al0'));
+	chart.draw(data, options);
+}
+
+// Drawing Charts
+{% for ev in eval_list %}
+function drawChart_cr{{ forloop.counter }}() {
+	// Create the data table.
+	var data = new google.visualization.DataTable();
+	data.addColumn('string', 'Topping');
+	data.addColumn('number', 'Slices');
+	data.addRows({{ ev.chart_cr|safe }});
+	
+	var options = {
+		chartArea:{left:0,top:0,width:400,height:300}
+	};
+	
+	var chart = new google.visualization.PieChart(document.getElementById('piechart_cr{{ forloop.counter }}'));
+	chart.draw(data, options);
+}
+
+function drawChart_al{{ forloop.counter }}() {
+	// Create the data table.
+	var data = new google.visualization.DataTable();
+	data.addColumn('string', 'Topping');
+	data.addColumn('number', 'Slices');
+	data.addRows({{ ev.chart_al|safe }});
+	
+	var options = {
+		chartArea:{left:0,top:0,width:400,height:300}
+	};
+	
+	var chart = new google.visualization.PieChart(document.getElementById('piechart_al{{ forloop.counter }}'));
+	chart.draw(data, options);
+}
+{% endfor %}
+
+$(document).ready(function() {
+	$(".dataframe").addClass("table table-hover");
+	$(".dataframe").children().css("text-align", "center");
+	$(".eval_cr").css("width", "50%");
+	$(".eval_fa").css("width", "73%");
+	
+	// hide index column
+	$('.main_al td:nth-child(1),.main_al th:nth-child(1)').hide();
+	
+	// set tr background
+	$('.main_al tr').each(function() {
+	    var idx_name = $(this).find("td:first").html();
+	    if(idx_name == "Mean" || idx_name == "Min" || idx_name == "Max" || idx_name == "Std. Deviation" ) {
+	    	$(this).css("background", "#ccc");
+	    }
+	});
+	
+	// set td background
+	// data_result
+	$('.data_result td').each(function() {
+	    var dat_value = $(this).html();
+	    
+	    if($.isNumeric(dat_value) && dat_value > 0) {
+	    	$(this).css("background", "#ccc");
+	    }
+	});
+
+	$(".eval_fa tr").each(function(i){
+		if(i == 0) $(this).children().css("background", "#ddd");
+		j = i + 1;
+	    if (j%4 < 2){
+	        $(this).children().css("background", "#eee");
+	    }
+	});
+	$(".eval_al tr").each(function(i){
+		if(i == 0) $(this).children().css("background", "#ddd");
+		j = i + 1;
+	    if (j%4 < 2){
+	        $(this).children().css("background", "#eee");
+	    }
+	});
+	
+	$(function() {
+		// Created By: Brij Mohan
+		// Website: http://techbrij.com
+		function groupTable($rows, startIndex, total) {
+			if (total === 0) {
+				return;
+			}
+			var i, currentIndex = startIndex, count = 1, lst = [];
+			var tds = $rows.find('td:eq(' + currentIndex + ')');
+			var ctrl = $(tds[0]);
+			lst.push($rows[0]);
+			for (i = 1; i <= tds.length; i++) {
+				if (ctrl.text() == $(tds[i]).text()) {
+					count++;
+					$(tds[i]).addClass('deleted');
+					lst.push($rows[i]);
+				} else {
+					if (count > 1) {
+						ctrl.attr('rowspan', count);
+						groupTable($(lst), startIndex + 1, total - 1)
+					}
+					count = 1;
+					lst = [];
+					ctrl = $(tds[i]);
+					lst.push($rows[i]);
+				}
+			}
+		}
+		groupTable($('.data_eval tr:has(td)'), 0, 3);
+		$('.data_eval .deleted').remove();
+	});
+	
+	// check all expert
+	$("#chk_expert_all").change(function () {
+		if($("#chk_expert_all").is(':checked'))
+			$(':input[name="chk_expert"]').prop('checked', 'checked');
+		else
+			$(':input[name="chk_expert"]').removeAttr('checked');
+	});
+})
+
+function fnResultApply() {
+	var chk_cnt = $("input[name=chk_expert]:checkbox:checked").length;
+	if(chk_cnt < 1) {
+		alert("You should check at least one Expert.");
+		return;
+	}
+	
+	var chk_experts = "";
+	$("input[name=chk_expert]").each(
+		function(){
+			// To do
+			if(this.checked){
+				if(chk_experts != "") chk_experts += ",";
+				chk_experts += this.value
+			}
+		}
+	)
+	location.href = "/hdm/model_result/{{ hdm_id }}/" + chk_experts;
+}
+
+function fnResultDelete() {
+	var chk_cnt = $("input[name=chk_expert]:checkbox:checked").length;
+	if(chk_cnt < 1) {
+		alert("You should check at least one Expert.");
+		return;
+	}
+
+	if(!confirm("Are you sure you want to delete checked data?")) return;
+	
+	var chk_experts = "";
+	$("input[name=chk_expert]").each(
+		function(){
+			// To do
+			if(this.checked){
+				if(chk_experts != "") chk_experts += ",";
+				chk_experts += this.value
+			}
+		}
+	)
+	location.href = "/hdm/exp_delete/{{ hdm_id }}/" + chk_experts;
+}
+</script>
+<ul class="nav nav-tabs">
+  <li id="tab1" role="presentation"><a href="/hdm/model_manage/">Model List</a></li>
+  <li id="tab2" role="presentation"><a href="/hdm/model_view/{{ hdm_id }}/">Model Design</a></li>
+  <li id="tab3" role="presentation" class="active"><a href="#">Model Result <span class="badge">{{ eval_all_list|length }}</span></a></li>
+</ul>
+<div class="panel">
+  <div class="panel-heading">
+<ul class="nav nav-tabs">
+  <li class="ev_tab active" id="ev_tab0" role="presentation"><a href="javascript:fnActiveTab(0);">Total</a></li>
+{% for ev in eval_list %}
+  <li class="ev_tab" id="ev_tab{{ forloop.counter }}" role="presentation"><a href="javascript:fnActiveTab({{ forloop.counter }})">{{ ev.expert_lname }}, {{ ev.expert_fname }}</a></li>
+{% endfor %}
+</ul>
+</div>
+<div class="panel-body" style="height:auto; min-height:400px; overflow:auto;">
+<div class="div_eval" id="div_eval0">
+	<div class="row" style="margin:0px;">
+		<div class="d-md-flex flex-items-center gut-lg">
+			<div class="panel panel-danger">
+				<div class="panel-heading"><b>Result</b></div>
+				<div class="panel-body">
+	      <!-- left panel -->
+	      <div class="col-md-7 text-md-left">
+	<div class="alert alert-success" role="alert">
+		<h5><b>Total Expert's Number:</b> {{ eval_all_list|length }}</h5> 
+		<h5><b>Last Evaluated Date:</b> {{ eval_all_list.0.eval_date }}</h5>
+		<h5><b>Current Experts:</b> ({{ eval_list|length }})  
+    {% for ev in eval_list %}
+    	{{ ev.expert_lname }}, {{ ev.expert_fname }}. 
+	{% endfor %}</h5>
+	</div>
+	<div class="alert alert-info" role="alert">
+		<div class="col-md-4">
+			<h5><b>Choose Expert(s)</b></h5>
+			<button type="button" class="btn btn-success" onclick="location.reload();" style="width:120px;margin-top:10px;" title="Reload this result page."><span class="glyphicon glyphicon-refresh" aria-hidden="true" style="margin-right:5px;"></span>Reload</button>
+		</div>
+		<div class="col-md-4">
+			<input type="checkbox" id="chk_expert_all" name="chk_expert_all" class="custom-control-input" value="0" onClick="fnCheckExpertAll();"> Check All
+	    {% for ev in eval_all_list %}
+	<label class="custom-control custom-checkbox">
+	  <input type="checkbox" id="chk_expert_{{ ev.expert_no }}" name="chk_expert" class="custom-control-input" value="{{ ev.expert_no }}">
+	  <span class="custom-control-indicator"></span>
+	  <span class="custom-control-description">{{ ev.expert_lname }}, {{ ev.expert_fname }}</span>
+	</label><br>
+		{% endfor %}		
+		</div>
+		<div class="col-md-4 vcenter">
+			<button type="button" class="btn btn-danger" onclick="fnResultApply();" style="width:125px;margin-top:10px;" title="Select expert(s) for recalculation."><span class="glyphicon glyphicon-play" aria-hidden="true" style="margin-right:5px;"></span>Recalculate</button>
+			<button type="button" class="btn btn-warning" onclick="fnResultDelete();" style="width:125px;margin-top:10px;" title="Select expert(s) for delete the expert(s)."><span class="glyphicon glyphicon-trash" aria-hidden="true" style="margin-right:5px;"></span>Del Response</button>
+		</div>
+	</div>
+	<div class="form-group">
+	  <label for="eval_ob">Result of the model:</label>
+	  <div>{{ total_df_al|safe }}</div>
+	</div>
+		</div>
+	    <!-- right panel -->
+		<div class="mx-auto col-sm-8 col-md-5 hide-sm Box bg-gray-light pt-4 pb-5">
+			<div class="panel panel-info">
+				<div class="panel-heading"><b>Result Chart - Alternatives</b></div>
+				<div class="panel-body">
+					<div class="chart" id="piechart_al0" style="width: 100%; height: 220px;"></div>
+				</div>
+			</div>
+		</div>
+				</div>
+			</div>
+	    </div>
+	</div>
+</div>
+    {% for ev in eval_list %}
+<div class="div_eval" id="div_eval{{ forloop.counter }}" style="display:none;">
+	<div class="row" style="margin:0px;">
+		<div class="d-md-flex flex-items-center gut-lg">
+			<div class="panel panel-danger">
+				<div class="panel-heading"><b>Result</b></div>
+				<div class="panel-body">
+	      <!-- left panel -->
+	      <div class="col-md-7 text-md-left">
+	<div class="alert alert-success" role="alert">
+		<h5><b>Expert's Name:</b> {{ ev.expert_lname }}, {{ ev.expert_fname }} / <a href="mailto:{{ ev.expert_email }}">{{ ev.expert_email }}</a></h5> 
+		<h5><b>Evaluating Date:</b> {{ ev.eval_date }}</h5>
+		<h5><b>Download:</b> <a href="/hdm/result_csv_download/{{ hdm_id }}/{{ ev.expert_no }}"><span class="badge" title="Download CSV file for the response.">CSV</span></a>
+		<a href="/hdm/result_json_download/{{ hdm_id }}/{{ ev.expert_no }}" title="Download JSON file for the response."><span class="badge">JSON</span></a>
+		</h5>
+	</div>
+	<div class="form-group">
+	  <label for="eval_ob">1. Result for Criteria:</label>
+	  <div>{{ ev.result_cr|safe }}</div>
+	</div>
+	<div class="form-group">
+	  <label for="eval_cr">2. Result for Factors:</label>
+	  <div>{{ ev.result_fa|safe }}</div>
+	</div>
+		</div>
+	    <!-- right panel -->
+		<div class="mx-auto col-sm-8 col-md-5 hide-sm Box bg-gray-light pt-4 pb-5">
+			<div class="panel panel-info">
+				<div class="panel-heading"><b>Result Chart</b></div>
+				<div class="panel-body">
+					1. Criteria
+					<div class="chart" id="piechart_cr{{ forloop.counter }}" style="width: 100%; height: 220px;"></div>
+					2. Alternatives
+					<div class="chart" id="piechart_al{{ forloop.counter }}" style="width: 100%; height: 220px;"></div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group" style="padding:15px;">
+		  <label for="eval_fa">3. Result for Alternatives:</label>
+		  <div>{{ ev.result_al|safe }}</div>
+		</div>
+				</div>
+			</div>
+			<div class="panel panel-warning">
+				<div class="panel-heading"><b>Evaluation</b></div>
+				<div class="panel-body">
+	<div class="form-group">
+	  <label for="eval_ob">1. Evaluation for Criteria:</label>
+	  <div>{{ ev.eval_cr|safe }}</div>
+	</div>
+	<div class="form-group">
+	  <label for="eval_cr">2. Evaluation for Factors:</label>
+	  <div>{{ ev.eval_fa|safe }}</div>
+	</div>
+	<div class="form-group">
+	  <label for="eval_fa">3. Evaluation for Alternatives:</label>
+	  <div>{{ ev.eval_al|safe }}</div>
+	</div>
+			</div>
+
+	      </div>
+	    </div>
+	</div>
+</div>
+    {% endfor %}
+</div>
+</div>
+{% endblock content %}

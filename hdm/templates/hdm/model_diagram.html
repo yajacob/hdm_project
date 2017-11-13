@@ -1,0 +1,30 @@
+{% extends 'core/base_win.html' %}
+{% load staticfiles %}
+
+{% block content %}
+<script src="{% static 'js/raphael.js' %}"></script>
+<script src="{% static 'js/Treant.js' %}"></script>
+<script>
+{{ ds|safe }}
+</script>
+<script>
+$(document).ready(function() {
+	$(".nodeHDM").css("width", "175px");
+	$("#CR00").css("width", "300px");
+})
+</script>
+<div class="chart" id="DiagramHDM1"></div>
+<script>
+	new Treant(ALTERNATIVE);
+</script>
+<div class="container">
+	<div class="panel panel-info">
+	  <div class="panel-heading"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span> <b>Altanatives</b></div>
+	  <div class="panel-body" style="text-align:center;">
+	    {% for al in hdm_al %}
+			<button type="button" class="btn btn-success" style="width:180px; margin:10px; cursor:not-allowed;">{{ al }}</button>
+	    {% endfor %}
+	  </div>
+	</div>
+</div>
+{% endblock content %}
