@@ -88,15 +88,15 @@ function fnAbout() {
               {% if user.is_authenticated %}
               <li><a href="#">Welcome <b>{{ request.user.username }}</b></a></li>
               {% else %}
-				{% if request.path == '/accounts/login/' %}
-              <li class="active"><a href="/accounts/login/"><b>Login</b></a></li>
+				{% if request.path == '/auth/login/' %}
+              <li class="active"><a href="/auth/login/"><b>Login</b></a></li>
 				{% else %}
-              <li><a href="/accounts/login/"><b>Login</b></a></li>
+              <li><a href="/auth/login/"><b>Login</b></a></li>
 				{% endif %} 
-				{% if request.path == '/accounts/signup/' %}
-              <li class="active"><a href="/accounts/signup"><b>Signup</b></a></li>
+				{% if request.path == '/auth/signup/' %}
+              <li class="active"><a href="/auth/signup"><b>Signup</b></a></li>
 				{% else %}
-              <li><a href="/accounts/signup"><b>Signup</b></a></li>
+              <li><a href="/auth/signup"><b>Signup</b></a></li>
 				{% endif %} 
               {% endif %} 
               {% if user.is_authenticated %}
@@ -110,8 +110,8 @@ function fnAbout() {
 		         <li><a href="/admin/" target="_admin"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Admin Page</a></li>
               {% endif %} 
 		         <li><a href="#"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Your profile</a></li>
-		         <li><a href="/accounts/password/"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setting</a></li>
-		         <li><a href="/accounts/logout/"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout</a></li>
+		         <li><a href="/auth/password/"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setting</a></li>
+		         <li><a href="/auth/logout/"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout</a></li>
 		       </ul>
               {% endif %} 
 		     </li>
