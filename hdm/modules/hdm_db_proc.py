@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import connection
 
-def getHDMById(request, hdm_id):
+def getHdmById(request, hdm_id):
     cursor = connection.cursor()
     if hdm_id == "":
         if request.user.is_staff:

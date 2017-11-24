@@ -155,7 +155,7 @@ def hdm_model_manage(request):
 @login_required(login_url="/accounts/login/")
 def hdm_model_view(request, hdm_id):
     try:
-        hdm_dict = getHDMById(request, hdm_id)
+        hdm_dict = getHdmById(request, hdm_id)
 
         ds = DiagramScript(hdm_dict)
         hdm_al = hdm_dict['hdm_alternatives'].split(",")
