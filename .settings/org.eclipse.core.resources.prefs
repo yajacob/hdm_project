@@ -6,4 +6,5 @@ encoding//hdm/urls/auth.py=utf-8
 encoding//hdm/urls/expert.py=utf-8
 encoding//hdm/urls/hdm.py=utf-8
 encoding//hdm/urls/result.py=utf-8
+encoding//hdm/views/api.py=utf-8
 encoding//hdm/views/auth.py=utf-8

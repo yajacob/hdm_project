@@ -18,7 +18,7 @@ class HdmInconsistency:
         row_size_dic = {6:15, 5:10, 4:6, 3:3}
         matrix_size = fact_size_dic[len(temp_list)]
         self.matrix_size = matrix_size
-        print("matrix_size:", matrix_size)
+        #print("matrix_size:", matrix_size)
         matrix_pair = [0 for i in range(row_size_dic[matrix_size])]
         list_idx = 0
         temp_dic = {}
@@ -222,9 +222,9 @@ class HdmInconsistency:
 
         df = pd.DataFrame(normalized_list)
         
-        #old_consistency = self.tround(df.std().mean(), 4) 
-        new_consistency = self.tround(math.sqrt(df.var().sum()), 4)
-        return new_consistency
+        #old_inconsistency = self.tround(df.std().mean(), 4) 
+        new_inconsistency = self.tround(math.sqrt(df.var().sum()), 4)
+        return new_inconsistency
 
 
 def main():
@@ -242,7 +242,7 @@ def main():
     
     hi = HdmInconsistency()
     consistency = hi.main_process(resp_data)
-    print("consistency: %0.4f" % consistency)
+    #print("consistency: %0.4f" % consistency)
 
 if __name__ == "__main__":
     main()

@@ -75,9 +75,6 @@ def hdm_model_create(request):
 @csrf_exempt
 def uploadCSVfile(request):
     response = {}
-    print("#################")
-    print(request.FILES)
-    print("#################")
     if request.method == 'POST' and request.FILES['upload_file']:
         file = request.FILES['upload_file']
         print('test1')
