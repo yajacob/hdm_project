@@ -3,13 +3,12 @@ import csv
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from hdm.modules.hdm_db_proc import *
 from hdm.modules.hdm_result_calc import HdmResultCalc
 import numpy as np
 import pandas as pd
-
 
 @login_required(login_url="/accounts/login/")
 def hdm_result_csv_download(request, hdm_id, exp_id):
@@ -141,6 +140,34 @@ def hdm_result_json_download(request, hdm_id, exp_id):
 
     return response
 
+# CR00,0|CR10,0.0181|CR11,0|CR12,0|CR13,0|CR20,0|CR21,0|CR22,0
+def make_incon_dic(incon_data):
+    print(incon_data)
+    temp_list = incon_data.split("|")
+    incon_dic = {}
+    
+    if incon_data == "":
+        return incon_dic
+    
+    for tl in temp_list:
+        sub_list = tl.split(",")
+        incon_dic[sub_list[0]] = sub_list[1]
+    return incon_dic
+
+# CR00,0|CR10,0.0181|CR11,0|CR12,0|CR13,0|CR20,0|CR21,0|CR22,0
+def make_incon_list(incon_data):
+    print(incon_data)
+    temp_list = incon_data.split("|")
+    incon_list = []
+    
+    if incon_data == "":
+        return incon_list
+    
+    for tl in temp_list:
+        sub_list = tl.split(",")
+        incon_list.append(float(sub_list[1]))
+    return incon_list
+
 @login_required(login_url="/accounts/login/")
 def hdm_model_result(request, hdm_id, exp_id):
     # pandas setting for float number
@@ -172,6 +199,8 @@ def hdm_model_result(request, hdm_id, exp_id):
     columns = [col[0] for col in cursor.description]
     eval_list = [dict(zip(columns, row)) for row in cursor.fetchall()]
     cursor.close()
+    
+    eval_len = len(eval_list)
 
     main_df_cr = pd.DataFrame()
     main_df_fa = pd.DataFrame()
@@ -180,6 +209,7 @@ def hdm_model_result(request, hdm_id, exp_id):
     total_df_al_chart = pd.DataFrame()
     
     list_col_keys = []
+    incon_list = []
 
     for ev in eval_list:
         exp_no = ev['expert_no']
@@ -195,6 +225,9 @@ def hdm_model_result(request, hdm_id, exp_id):
         eval_al.index = np.arange(1, len(eval_al) + 1)
         main_df_al = pd.concat([main_df_al, eval_al])
         eval_al_html = eval_al[['Criteria', 'Factors', 'Alternatives', 'Value']].to_html()
+
+        ev_incon = make_incon_list(ev['inconsistency'])
+        incon_list = incon_list + ev_incon 
         
         ev['eval_cr'] = eval_cr_html.replace("dataframe", "dataframe data_eval eval_cr") 
         ev['eval_fa'] = eval_fa_html.replace("dataframe", "dataframe data_eval eval_fa")
@@ -211,12 +244,22 @@ def hdm_model_result(request, hdm_id, exp_id):
         for key, val in dic_sum.items():
             temp += "['%s', %.2f]," % (key, val)
         ev['chart_al'] = "[%s]" % temp
-        
+
+        '''        
         ev['result_cr'] = pd.read_json(ev['result_cr']).to_html()
         ev['result_fa'] = pd.read_json(ev['result_fa']).to_html() #.replace("0.000", "-").replace("0.00", "-").replace("0.0", "-")
         ev['result_al'] = pd.read_json(ev['result_al'])
         ev['result_al']['SUM'] = ev['result_al'].sum(axis=1)
-        ev['result_al'] = ev['result_al'].to_html()
+        '''
+
+        df_result_cr = pd.read_json(ev['result_cr'])
+        df_result_fa = pd.read_json(ev['result_fa'])
+        df_result_al = pd.read_json(ev['result_al'])
+        df_result_al['SUM'] = df_result_al.sum(axis=1)
+        
+        ev['result_cr'] = df_result_cr.to_html()
+        ev['result_fa'] = df_result_fa.to_html()
+        ev['result_al'] = df_result_al.to_html()
         
         ev['result_cr'] = ev['result_cr'].replace("dataframe", "dataframe data_result result_cr") 
         ev['result_fa'] = ev['result_fa'].replace("dataframe", "dataframe data_result result_fa")
@@ -239,14 +282,14 @@ def hdm_model_result(request, hdm_id, exp_id):
             list_col_keys.append(al_result_dic.keys())
 
         # Add expert column
-        temp_df['Experts'] = ev['expert_lname'] + ', ' + ev['expert_fname']
-        inconsistency = 0.0000
+        temp_df['Experts'] = ev['expert_fname'] + ' ' + ev['expert_lname']
+        inconsistency = "Max: " + str(np.max(ev_incon))
         #al_result_dic.update({'_Inconsistency':inconsistency})
         temp_df['Inconsistency'] = inconsistency
+        print("temp_df:", temp_df)
         
         total_df_al = pd.concat([total_df_al, temp_df])
 
-    
     #main_total_chart_cr
     main_chart_cr = ''
     
@@ -263,6 +306,12 @@ def hdm_model_result(request, hdm_id, exp_id):
     # Set Index as Expert's name
     total_df_al.set_index('Experts', inplace=True, drop=True)
 
+    # for inconsistency - calculation of mean, min, max, std. dev.
+    inc_mean = np.mean(incon_list)
+    inc_min = np.min(incon_list)
+    inc_max = np.max(incon_list)
+    inc_std = np.std(incon_list)
+
     # calculate mean, min, max, std. dev.
     total_df_al.loc['Mean'] = total_df_al.mean()
     total_df_al.loc['Min']  = total_df_al.min()
@@ -276,11 +325,21 @@ def hdm_model_result(request, hdm_id, exp_id):
 
     # multiindex to single index
     total_df_al = total_df_al.reset_index()
+    
+    # set data for inconsistency
+    total_df_al.at[eval_len + 0, 'Inconsistency'] = inc_mean
+    total_df_al.at[eval_len + 1, 'Inconsistency'] = inc_min
+    total_df_al.at[eval_len + 2, 'Inconsistency'] = inc_max
+    total_df_al.at[eval_len + 3, 'Inconsistency'] = inc_std
 
     # char data for main
     main_result_cr_html = main_result_cr.to_html()
     main_result_fa_html = main_result_fa.to_html()
     main_result_al_html = main_result_al.to_html()
+    
+    print("*"*80)
+    print("total_df_al:\n", total_df_al)
+    
     total_df_al_html    = total_df_al.to_html()
 
     main_result_cr_html = main_result_cr_html.replace("dataframe", "dataframe data_eval eval_cr") 
@@ -291,3 +350,14 @@ def hdm_model_result(request, hdm_id, exp_id):
     return render(request, 'hdm/model_result.html', {'eval_all_list': eval_all_list, 'eval_list': eval_list, 'hdm_id':hdm_id, 
                    'main_result_cr':main_result_cr_html, 'main_result_fa':main_result_fa_html, 'main_result_al':main_result_al_html,
                    'total_df_al':total_df_al_html, 'main_chart_cr':main_chart_cr, 'main_chart_al':main_chart_al})
+
+
+@login_required(login_url="/accounts/login/")
+def hdm_expert_delete(request, hdm_id, exp_id):
+    cursor = connection.cursor()
+
+    query = "DELETE FROM hdm_evaluation WHERE hdm_id = '%s' AND expert_no in (%s)" % (hdm_id, exp_id)
+    cursor.execute(query)
+
+    return redirect('/result/' + hdm_id)
+

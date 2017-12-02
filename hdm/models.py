@@ -39,6 +39,8 @@ class Evaluation(models.Model):
     result_fa = models.TextField(default="")
     # calculated result for alternatives
     result_al = models.TextField(default="")
+    # calculated inconsistency 
+    inconsistency = models.TextField(default="")
     eval_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

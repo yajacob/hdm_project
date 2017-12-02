@@ -40,7 +40,6 @@ function fnSubmitEvaluation() {
 //For Saving Evaluated Item
 function fnEvaluationSave() {
 	var cur_eval_item = $('#cur_eval_item').val();
-	console.log('cur_eval_item:'+cur_eval_item);
 	var cur_eval_cnt = $('#cur_eval_item_cnt').val();
 	var gr_code = "";
 	var cr_code = parseInt(cur_eval_item.substring(2,3));
@@ -72,6 +71,13 @@ function fnEvaluationSave() {
 		eval_data += item_rs_code + "," + item_rs_name + "," + item_rs_value;
 	}
 	
+	// If the number of input items is 3 or less, inconsistency calculation is not processed.
+	if(cur_eval_cnt < 3) {
+		inconsistency = 0.0;
+		fnProcJson(inconsistency, cur_eval_item, gr_code, eval_data);
+		return;
+	}
+	
 	//ajax_param['eval_data'] = eval_data;
 	$.ajax({
         type: "GET",
@@ -81,7 +87,7 @@ function fnEvaluationSave() {
 			eval_data:eval_data
 		},
         dataType: "json",
-        success: function(json) { fnProcJson(json, cur_eval_item, gr_code, eval_data); },
+        success: function(json) { fnProcJson(json.inconsistency, cur_eval_item, gr_code, eval_data); },
     	error: function(e)
     	{
 			console.log("Error:"+e.message);
@@ -90,8 +96,7 @@ function fnEvaluationSave() {
 
 }
 
-function fnProcJson(json, cur_eval_item, gr_code, eval_data) {
-   	inconsistency = json.inconsistency;
+function fnProcJson(inconsistency, cur_eval_item, gr_code, eval_data) {
    	if (inconsistency > 0.3) {
    		if(!confirm(("The inconsistency of the values you entered is "+inconsistency+".\n\nDo you want to save?"))) {
    			return;
@@ -114,7 +119,11 @@ function fnProcJson(json, cur_eval_item, gr_code, eval_data) {
 			$("#eval_al").val(eval_data);
 	}
 
-	$("#inconsistency").val($("#inconsistency").val() + "|" + inconsistency);
+	var incon_val = $("#inconsistency").val();
+	if(incon_val != "") incon_val += "|";
+	incon_val = incon_val + cur_eval_item + "," +  inconsistency;
+	
+	$("#inconsistency").val(incon_val);
 	$('#sbModal').modal('hide');
 	$("#"+cur_eval_item).css('border-color', '#d9534f').css('border-width', '2px');
 	

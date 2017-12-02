@@ -81,7 +81,7 @@ class HdmResultCalc:
         for idx, al in enumerate(al_temp_result):
             temp = al/sum(al_temp_result)*100
             al_result[idx] = round(temp, 2)
-            #print("al: %f, temp: %f, result:%f" % (al, temp, al_result[idx]))
+            print("al: %f, temp: %f, result:%f" % (al, temp, al_result[idx]))
 
         al_list_key = list(self.hdm_dic['al'].split(","))
         al_result_dic = {}
@@ -90,7 +90,7 @@ class HdmResultCalc:
             temp = "%2.2f" % al_result[idx]
             al_result_dic[key] = temp
         
-        #return {"cr":dic_cr, "fa":dic_fa, "al":dic_al, "al_dat":al_dat}
+        print("al_result_dic:", al_result_dic)
         return al_result_dic
 
 
@@ -110,7 +110,7 @@ class HdmResultCalc:
         return df_fa
 
     def proc_result_main_al(self, df_al):
-        print(df_al)
+        #print(df_al)
         df_al = df_al.groupby(['Criteria', 'Factors', 'Alternatives'], as_index=False).sum()
         sum_al = df_al['Value'].sum()
         df_al['Value'] = round(df_al['Value']/sum_al, 3)

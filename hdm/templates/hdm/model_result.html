@@ -111,6 +111,14 @@ $(document).ready(function() {
 	    }
 	});
 
+	$(".eval_cr tr").each(function(i){
+		if(i == 0) $(this).children().css("background", "#ddd");
+		j = i + 1;
+	    if (j%4 < 2){
+	        $(this).children().css("background", "#eee");
+	    }
+	});
+
 	$(".eval_fa tr").each(function(i){
 		if(i == 0) $(this).children().css("background", "#ddd");
 		j = i + 1;
@@ -118,6 +126,7 @@ $(document).ready(function() {
 	        $(this).children().css("background", "#eee");
 	    }
 	});
+
 	$(".eval_al tr").each(function(i){
 		if(i == 0) $(this).children().css("background", "#ddd");
 		j = i + 1;
@@ -184,7 +193,7 @@ function fnResultApply() {
 			}
 		}
 	)
-	location.href = "/hdm/model_result/{{ hdm_id }}/" + chk_experts;
+	location.href = "/result/{{ hdm_id }}/" + chk_experts;
 }
 
 function fnResultDelete() {
@@ -206,7 +215,7 @@ function fnResultDelete() {
 			}
 		}
 	)
-	location.href = "/hdm/exp_delete/{{ hdm_id }}/" + chk_experts;
+	location.href = "/result/exp_delete/{{ hdm_id }}/" + chk_experts;
 }
 </script>
 <ul class="nav nav-tabs">
@@ -219,7 +228,7 @@ function fnResultDelete() {
 <ul class="nav nav-tabs">
   <li class="ev_tab active" id="ev_tab0" role="presentation"><a href="javascript:fnActiveTab(0);">Total</a></li>
 {% for ev in eval_list %}
-  <li class="ev_tab" id="ev_tab{{ forloop.counter }}" role="presentation"><a href="javascript:fnActiveTab({{ forloop.counter }})">{{ ev.expert_lname }}, {{ ev.expert_fname }}</a></li>
+  <li class="ev_tab" id="ev_tab{{ forloop.counter }}" role="presentation"><a href="javascript:fnActiveTab({{ forloop.counter }})">{{ ev.expert_fname }} {{ ev.expert_lname }}</a></li>
 {% endfor %}
 </ul>
 </div>
@@ -237,7 +246,7 @@ function fnResultDelete() {
 		<h5><b>Last Evaluated Date:</b> {{ eval_all_list.0.eval_date }}</h5>
 		<h5><b>Current Experts:</b> ({{ eval_list|length }})  
     {% for ev in eval_list %}
-    	{{ ev.expert_lname }}, {{ ev.expert_fname }}. 
+    	{{ ev.expert_fname }} {{ ev.expert_lname }}, 
 	{% endfor %}</h5>
 	</div>
 	<div class="alert alert-info" role="alert">
@@ -251,7 +260,7 @@ function fnResultDelete() {
 	<label class="custom-control custom-checkbox">
 	  <input type="checkbox" id="chk_expert_{{ ev.expert_no }}" name="chk_expert" class="custom-control-input" value="{{ ev.expert_no }}">
 	  <span class="custom-control-indicator"></span>
-	  <span class="custom-control-description">{{ ev.expert_lname }}, {{ ev.expert_fname }}</span>
+	  <span class="custom-control-description">{{ ev.expert_fname }} {{ ev.expert_lname }}</span>
 	</label><br>
 		{% endfor %}		
 		</div>
@@ -286,6 +295,7 @@ function fnResultDelete() {
 			<div class="panel panel-danger">
 				<div class="panel-heading"><b>Result</b></div>
 				<div class="panel-body">
+<div class="row" style="margin:0px;">
 	      <!-- left panel -->
 	      <div class="col-md-7 text-md-left">
 	<div class="alert alert-success" role="alert">
@@ -316,10 +326,13 @@ function fnResultDelete() {
 				</div>
 			</div>
 		</div>
+</div>
+<div class="row" style="margin:0px;">
 		<div class="form-group" style="padding:15px;">
 		  <label for="eval_fa">3. Result for Alternatives:</label>
 		  <div>{{ ev.result_al|safe }}</div>
 		</div>
+</div>
 				</div>
 			</div>
 			<div class="panel panel-warning">

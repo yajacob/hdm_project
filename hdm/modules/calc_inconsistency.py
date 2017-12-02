@@ -25,7 +25,10 @@ class HdmInconsistency:
         for idx, tl in enumerate(temp_list):
             pair_data = tl.split(",")
     
-            res_id = int(pair_data[0][-1:]) - 1
+            if pair_data[0][-1:] == "0":
+                res_id = int(pair_data[0][-2:-1]) - 1
+            else:
+                res_id = int(pair_data[0][-1:]) - 1
             res_val = int(pair_data[2])
             temp_dic[res_id] = res_val
     
@@ -235,14 +238,16 @@ def main():
     # resp_data = 'CR11,Pink,50|CR12,Blue,50|CR11,Pink,50|CR13,Yellow,50|CR12,Blue,50|CR13,Yellow,50'
     
     # 5 data
-    resp_data = 'CR31,test31,12|CR32,test32,88|CR31,test31,70|CR33,test33,30|CR31,test31,17|CR34,test34,83|CR31,test31,76|CR35,test35,24|CR32,test32,17|CR33,test33,83|CR32,test32,24|CR34,test34,76|CR32,test32,19|CR35,test35,81|CR33,test33,23|CR34,test34,77|CR33,test33,5|CR35,test35,95|CR34,test34,22|CR35,test35,78'
+    #resp_data = 'CR31,test31,12|CR32,test32,88|CR31,test31,70|CR33,test33,30|CR31,test31,17|CR34,test34,83|CR31,test31,76|CR35,test35,24|CR32,test32,17|CR33,test33,83|CR32,test32,24|CR34,test34,76|CR32,test32,19|CR35,test35,81|CR33,test33,23|CR34,test34,77|CR33,test33,5|CR35,test35,95|CR34,test34,22|CR35,test35,78'
 
     # 6 data
     #resp_data = 'CR21,8GB,13|CR22,16GB,87|CR21,8GB,24|CR23,24GB,76|CR21,8GB,20|CR24,32GB,80|CR21,8GB,29|CR25,64GB,71|CR21,8GB,25|CR26,128GB,75|CR22,16GB,18|CR23,24GB,82|CR22,16GB,26|CR24,32GB,74|CR22,16GB,24|CR25,64GB,76|CR22,16GB,21|CR26,128GB,79|CR23,24GB,15|CR24,32GB,85|CR23,24GB,20|CR25,64GB,80|CR23,24GB,20|CR26,128GB,80|CR24,32GB,19|CR25,64GB,81|CR24,32GB,18|CR26,128GB,82|CR25,64GB,27|CR26,128GB,73'
     
+    resp_data = 'CR10,test1,50|CR20,test2,50|CR10,test1,50|CR30,test3,50|CR20,test2,26|CR30,test3,74'
+    
     hi = HdmInconsistency()
-    consistency = hi.main_process(resp_data)
-    #print("consistency: %0.4f" % consistency)
+    inconsistency = hi.main_process(resp_data)
+    print("consistency: %0.4f" % inconsistency)
 
 if __name__ == "__main__":
     main()

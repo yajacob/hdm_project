@@ -63,8 +63,10 @@ def hdm_expert_evaluate(request):
         get_eval_cr = request.POST.get('eval_cr')
         get_eval_fa = request.POST.get('eval_fa')
         get_eval_al = request.POST.get('eval_al')
+        get_eval_al = request.POST.get('eval_al')
+        get_inconsistency = request.POST.get('inconsistency')
         
-        eval_dic = {"cr":get_eval_cr, "fa":get_eval_fa, "al":get_eval_al }
+        eval_dic = {"cr":get_eval_cr, "fa":get_eval_fa, "al":get_eval_al, "inc":get_inconsistency }
         
         # calculation of evaluation 
         eval_calc = HdmEvalCalc(hdm_id, eval_dic)
@@ -79,14 +81,17 @@ def hdm_expert_evaluate(request):
 
         # DB Insert
         cursor = connection.cursor()
-        query = '''INSERT INTO hdm_evaluation (expert_no, expert_fname, expert_lname, expert_email,
-                        hdm_id, get_eval_cr, get_eval_fa, get_eval_al, eval_cr, eval_fa, eval_al,
-                        result_cr, result_fa, result_al, eval_date)
-                    VALUES ((select ifnull(max(expert_no), 0) + 1 FROM hdm_evaluation where hdm_id = %s), %s, %s, %s,
-                        %s, %s, %s, %s, %s, %s, %s,
-                        %s, %s, %s, DATETIME('now'))
+        query = '''INSERT INTO hdm_evaluation (expert_no, expert_fname, expert_lname, expert_email, hdm_id, 
+                        get_eval_cr, get_eval_fa, get_eval_al, eval_cr, eval_fa, eval_al,
+                        result_cr, result_fa, result_al, inconsistency, eval_date)
+                    VALUES ((select ifnull(max(expert_no), 0) + 1 FROM hdm_evaluation where hdm_id = %s), %s, %s, %s, %s,
+                        %s, %s, %s, %s, %s, %s,
+                        %s, %s, %s, %s, DATETIME('now'))
                 '''
-        cursor.execute(query, (hdm_id, exp_fname, exp_lname, exp_email, hdm_id, get_eval_cr, get_eval_fa, get_eval_al, eval_cr, eval_fa, eval_al, rs_cr, rs_fa, rs_al))
+        cursor.execute(query, (hdm_id, exp_fname, exp_lname, exp_email, hdm_id, 
+                               get_eval_cr, get_eval_fa, get_eval_al, 
+                               eval_cr, eval_fa, eval_al, 
+                               rs_cr, rs_fa, rs_al, get_inconsistency))
         
         return render(request, 'hdm/expert_success.html', {'result':result, 'designer':designer_dict})
     else:
