@@ -75,7 +75,7 @@ def hdm_expert_evaluate(request):
         eval_al = eval_calc.proc_eval_al()
         
         # calculation of result
-        rs_cr = eval_calc.proc_result_cr2()
+        rs_cr = eval_calc.proc_result_cr()
         rs_fa = eval_calc.proc_result_fa()
         rs_al = eval_calc.proc_result_al()
         json_incon = eval_calc.proc_incon_json()

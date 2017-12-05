@@ -38,6 +38,7 @@ class HdmEvalCalc:
         eval_cr = pd.DataFrame(self.make_list(self.eval_dic['cr']))
         eval_cr.drop(0, inplace=True, axis=1)
         eval_cr.columns = ['Criteria', 'Value']
+        eval_cr.sort(['Criteria', 'Value'])
         return eval_cr.to_json()
 
     # Experts' Factors evaluation to JSON
@@ -92,7 +93,7 @@ class HdmEvalCalc:
         return df_al.to_json()
     
     # to insert data - hdm_evaluation / result_cr
-    def proc_result_cr(self):
+    def proc_result_cr_bak(self):
         #str_cr = 'CR10,Color,24|CR20,Memory,76|CR10,Color,72|CR30,Delivery,28|CR20,Memory,37|CR30,Delivery,63'
         cr_list = self.make_list(self.eval_dic['cr'])
         df_cr = pd.DataFrame(cr_list)
@@ -108,7 +109,7 @@ class HdmEvalCalc:
         return df_cr.to_json()
 
     # to insert data - hdm_evaluation / result_cr
-    def proc_result_cr2(self):
+    def proc_result_cr(self):
         #str_cr = 'CR10,Color,24|CR20,Memory,76|CR10,Color,72|CR30,Delivery,28|CR20,Memory,37|CR30,Delivery,63'
         cr_list = self.make_list(self.eval_dic['cr'])
         df_cr = pd.DataFrame(cr_list)
@@ -127,6 +128,38 @@ class HdmEvalCalc:
 
     # to insert data - hdm_evaluation / result_fa
     def proc_result_fa(self):
+        hdm_str_cr = self.hdm_dic['cr']
+        fa_list = self.make_list(self.eval_dic['fa'])
+        df_fa = pd.DataFrame(fa_list)
+        df_fa.columns = ['ecode', 'ename', 'eval']
+        df_fa['ename'] = df_fa['ecode'] + df_fa['ename']
+        #df_fa = df_fa.sort_values(by=['ecode'])
+        df_fa['cr'] = df_fa['ecode'].str[-2]
+        df_fa['fa'] = df_fa['ecode'].str[-1]
+        df_fa['eval'] = df_fa['eval'].astype(int)
+
+        pdf_fa = pd.pivot_table(df_fa, index=['ename'], columns=['cr'], values='eval', aggfunc=np.sum).fillna(0)
+        sum_fa = pdf_fa.sum()
+
+        for idx, col in pdf_fa.iteritems():
+            pdf_fa[idx] = round(col/sum_fa[int(idx)-1], 3)
+            
+        fa_list = []
+        for i in hdm_str_cr.split(','):
+            fa_list.append(i)
+
+        pdf_fa.columns = fa_list
+        
+        pdf_fa['ecode'] = pdf_fa.index.values
+        pdf_fa['ecode'] = pdf_fa['ecode'].str[:4]
+        pdf_fa['ename'] = pdf_fa.index.str[4:]
+        print("*"*80)
+        print("pdf_fa:", pdf_fa)
+
+        return pdf_fa.to_json()
+
+    # to insert data - hdm_evaluation / result_fa
+    def proc_result_fa_bak(self):
         hdm_str_cr = self.hdm_dic['cr']
         fa_list = self.make_list(self.eval_dic['fa'])
         df_fa = pd.DataFrame(fa_list)

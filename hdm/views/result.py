@@ -211,14 +211,18 @@ def hdm_model_result(request, hdm_id, exp_id):
 
     for ev in eval_list:
         exp_no = ev['expert_no']
+
+        # 1. evaluation data
         eval_cr = pd.read_json(ev['eval_cr'])
         eval_cr.index = np.arange(1, len(eval_cr) + 1)
         main_df_cr = pd.concat([main_df_cr, eval_cr])
         eval_cr_html = eval_cr.to_html()
+        
         eval_fa = pd.read_json(ev['eval_fa'])
         eval_fa.index = np.arange(1, len(eval_fa) + 1)
         main_df_fa = pd.concat([main_df_fa, eval_fa])
         eval_fa_html = eval_fa.to_html()
+        
         eval_al = pd.read_json(ev['eval_al'])
         eval_al.index = np.arange(1, len(eval_al) + 1)
         main_df_al = pd.concat([main_df_al, eval_al])
@@ -231,7 +235,7 @@ def hdm_model_result(request, hdm_id, exp_id):
         ev['eval_fa'] = eval_fa_html.replace("dataframe", "dataframe data_eval eval_fa")
         ev['eval_al'] = eval_al_html.replace("dataframe", "dataframe data_eval eval_al")
 
-        # chart data
+        # 2. chart data
         temp = ""
         dic_chart_cr = pd.read_json(ev['result_cr']).to_dict()
         for key, val in dic_chart_cr["eval"].items():
@@ -243,20 +247,29 @@ def hdm_model_result(request, hdm_id, exp_id):
             temp += "['%s', %.2f]," % (key, val)
         ev['chart_al'] = "[%s]" % temp
 
-        # left join with result_cr and eval_incon  
+        # 3.1. left join with result_cr and eval_incon  
         df_result_cr = pd.read_json(ev['result_cr'])
         df_result_cr_incon = pd.merge(df_result_cr,
                       df_eval_incon,
                       on='ecode', how='left')
         df_result_cr_incon.drop(['ecode'],inplace=True,axis=1)
-        #df_result_cr_incon.set_index('ename', inplace=True, drop=True)
         
+        # 3.2. left join with result_cr and eval_incon  
         df_result_fa = pd.read_json(ev['result_fa'])
+        df_result_fa_incon = pd.merge(df_result_fa,
+                      df_eval_incon,
+                      on='ecode', how='left')
+        df_result_fa_incon.drop(['ecode'],inplace=True,axis=1)
+        # change index name
+        #df_result_fa_incon= df_result_fa_incon.set_index(df_result_fa_incon['ename'])
+
+        # 3.3. data for result_al
         df_result_al = pd.read_json(ev['result_al'])
         df_result_al['SUM'] = df_result_al.sum(axis=1)        
         
+        # 3.4. 
         ev['result_cr'] = df_result_cr_incon.to_html()
-        ev['result_fa'] = df_result_fa.to_html()
+        ev['result_fa'] = df_result_fa_incon.to_html()
         ev['result_al'] = df_result_al.to_html()
         
         ev['result_cr'] = ev['result_cr'].replace("dataframe", "dataframe data_result result_cr") 
