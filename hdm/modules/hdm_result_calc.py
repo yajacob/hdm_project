@@ -90,7 +90,6 @@ class HdmResultCalc:
             temp = "%2.2f" % al_result[idx]
             al_result_dic[key] = temp
         
-        print("al_result_dic:", al_result_dic)
         return al_result_dic
 
 

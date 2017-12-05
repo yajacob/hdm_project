@@ -64,9 +64,9 @@ def hdm_expert_evaluate(request):
         get_eval_fa = request.POST.get('eval_fa')
         get_eval_al = request.POST.get('eval_al')
         get_eval_al = request.POST.get('eval_al')
-        get_inconsistency = request.POST.get('inconsistency')
+        get_incon   = request.POST.get('inconsistency')
         
-        eval_dic = {"cr":get_eval_cr, "fa":get_eval_fa, "al":get_eval_al, "inc":get_inconsistency }
+        eval_dic = {"cr":get_eval_cr, "fa":get_eval_fa, "al":get_eval_al, "inc":get_incon }
         
         # calculation of evaluation 
         eval_calc = HdmEvalCalc(hdm_id, eval_dic)
@@ -75,9 +75,10 @@ def hdm_expert_evaluate(request):
         eval_al = eval_calc.proc_eval_al()
         
         # calculation of result
-        rs_cr = eval_calc.proc_result_cr()
+        rs_cr = eval_calc.proc_result_cr2()
         rs_fa = eval_calc.proc_result_fa()
         rs_al = eval_calc.proc_result_al()
+        json_incon = eval_calc.proc_incon_json()
 
         # DB Insert
         cursor = connection.cursor()
@@ -91,7 +92,7 @@ def hdm_expert_evaluate(request):
         cursor.execute(query, (hdm_id, exp_fname, exp_lname, exp_email, hdm_id, 
                                get_eval_cr, get_eval_fa, get_eval_al, 
                                eval_cr, eval_fa, eval_al, 
-                               rs_cr, rs_fa, rs_al, get_inconsistency))
+                               rs_cr, rs_fa, rs_al, json_incon))
         
         return render(request, 'hdm/expert_success.html', {'result':result, 'designer':designer_dict})
     else:

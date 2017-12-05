@@ -9,6 +9,7 @@ from hdm.modules.hdm_db_proc import *
 from hdm.modules.hdm_result_calc import HdmResultCalc
 import numpy as np
 import pandas as pd
+import json
 
 @login_required(login_url="/accounts/login/")
 def hdm_result_csv_download(request, hdm_id, exp_id):
@@ -123,7 +124,6 @@ def hdm_result_json_download(request, hdm_id, exp_id):
               AND a.expert_no = '%s'
             ORDER BY a.id DESC""" % (hdm_id, exp_id)
     cursor.execute(query)
-    print(query)
     columns = [col[0] for col in cursor.description]
     eval_list = [dict(zip(columns, row)) for row in cursor.fetchall()]
     cursor.close()
@@ -142,7 +142,6 @@ def hdm_result_json_download(request, hdm_id, exp_id):
 
 # CR00,0|CR10,0.0181|CR11,0|CR12,0|CR13,0|CR20,0|CR21,0|CR22,0
 def make_incon_dic(incon_data):
-    print(incon_data)
     temp_list = incon_data.split("|")
     incon_dic = {}
     
@@ -156,7 +155,6 @@ def make_incon_dic(incon_data):
 
 # CR00,0|CR10,0.0181|CR11,0|CR12,0|CR13,0|CR20,0|CR21,0|CR22,0
 def make_incon_list(incon_data):
-    print(incon_data)
     temp_list = incon_data.split("|")
     incon_list = []
     
@@ -174,7 +172,6 @@ def hdm_model_result(request, hdm_id, exp_id):
     pd.options.display.float_format = '{:.4f}'.format
 
     cursor = connection.cursor()
-
     query = """SELECT a.*, '-' chart_cr, '-' chart_al FROM hdm_evaluation a JOIN 
                 (SELECT max(id) as max_id FROM hdm_evaluation GROUP BY hdm_id, expert_email) b
             ON a.id = b.max_id
@@ -207,6 +204,7 @@ def hdm_model_result(request, hdm_id, exp_id):
     main_df_al = pd.DataFrame()
     total_df_al= pd.DataFrame()
     total_df_al_chart = pd.DataFrame()
+    df_all_eval_incon = pd.DataFrame()
     
     list_col_keys = []
     incon_list = []
@@ -226,9 +224,9 @@ def hdm_model_result(request, hdm_id, exp_id):
         main_df_al = pd.concat([main_df_al, eval_al])
         eval_al_html = eval_al[['Criteria', 'Factors', 'Alternatives', 'Value']].to_html()
 
-        ev_incon = make_incon_list(ev['inconsistency'])
-        incon_list = incon_list + ev_incon 
-        
+        df_eval_incon = pd.read_json(ev['inconsistency'])
+        df_all_eval_incon = pd.concat([df_all_eval_incon, df_eval_incon])
+
         ev['eval_cr'] = eval_cr_html.replace("dataframe", "dataframe data_eval eval_cr") 
         ev['eval_fa'] = eval_fa_html.replace("dataframe", "dataframe data_eval eval_fa")
         ev['eval_al'] = eval_al_html.replace("dataframe", "dataframe data_eval eval_al")
@@ -245,19 +243,19 @@ def hdm_model_result(request, hdm_id, exp_id):
             temp += "['%s', %.2f]," % (key, val)
         ev['chart_al'] = "[%s]" % temp
 
-        '''        
-        ev['result_cr'] = pd.read_json(ev['result_cr']).to_html()
-        ev['result_fa'] = pd.read_json(ev['result_fa']).to_html() #.replace("0.000", "-").replace("0.00", "-").replace("0.0", "-")
-        ev['result_al'] = pd.read_json(ev['result_al'])
-        ev['result_al']['SUM'] = ev['result_al'].sum(axis=1)
-        '''
-
+        # left join with result_cr and eval_incon  
         df_result_cr = pd.read_json(ev['result_cr'])
+        df_result_cr_incon = pd.merge(df_result_cr,
+                      df_eval_incon,
+                      on='ecode', how='left')
+        df_result_cr_incon.drop(['ecode'],inplace=True,axis=1)
+        #df_result_cr_incon.set_index('ename', inplace=True, drop=True)
+        
         df_result_fa = pd.read_json(ev['result_fa'])
         df_result_al = pd.read_json(ev['result_al'])
-        df_result_al['SUM'] = df_result_al.sum(axis=1)
+        df_result_al['SUM'] = df_result_al.sum(axis=1)        
         
-        ev['result_cr'] = df_result_cr.to_html()
+        ev['result_cr'] = df_result_cr_incon.to_html()
         ev['result_fa'] = df_result_fa.to_html()
         ev['result_al'] = df_result_al.to_html()
         
@@ -283,10 +281,8 @@ def hdm_model_result(request, hdm_id, exp_id):
 
         # Add expert column
         temp_df['Experts'] = ev['expert_fname'] + ' ' + ev['expert_lname']
-        inconsistency = "Max: " + str(np.max(ev_incon))
-        #al_result_dic.update({'_Inconsistency':inconsistency})
+        inconsistency = "Max: " + str(list(df_eval_incon.max())[1])
         temp_df['Inconsistency'] = inconsistency
-        print("temp_df:", temp_df)
         
         total_df_al = pd.concat([total_df_al, temp_df])
 
@@ -307,10 +303,10 @@ def hdm_model_result(request, hdm_id, exp_id):
     total_df_al.set_index('Experts', inplace=True, drop=True)
 
     # for inconsistency - calculation of mean, min, max, std. dev.
-    inc_mean = np.mean(incon_list)
-    inc_min = np.min(incon_list)
-    inc_max = np.max(incon_list)
-    inc_std = np.std(incon_list)
+    inc_mean = list(df_all_eval_incon.mean())[0]
+    inc_min  = list(df_all_eval_incon.min())[1]
+    inc_max  = list(df_all_eval_incon.max())[1]
+    inc_std  = list(df_all_eval_incon.std())[0]
 
     # calculate mean, min, max, std. dev.
     total_df_al.loc['Mean'] = total_df_al.mean()
@@ -337,8 +333,8 @@ def hdm_model_result(request, hdm_id, exp_id):
     main_result_fa_html = main_result_fa.to_html()
     main_result_al_html = main_result_al.to_html()
     
-    print("*"*80)
-    print("total_df_al:\n", total_df_al)
+    #print("*"*80)
+    #print("total_df_al:\n", total_df_al)
     
     total_df_al_html    = total_df_al.to_html()
 

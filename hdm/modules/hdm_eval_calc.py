@@ -107,6 +107,24 @@ class HdmEvalCalc:
         
         return df_cr.to_json()
 
+    # to insert data - hdm_evaluation / result_cr
+    def proc_result_cr2(self):
+        #str_cr = 'CR10,Color,24|CR20,Memory,76|CR10,Color,72|CR30,Delivery,28|CR20,Memory,37|CR30,Delivery,63'
+        cr_list = self.make_list(self.eval_dic['cr'])
+        df_cr = pd.DataFrame(cr_list)
+        df_cr.columns = ['ecode', 'ename', 'eval']
+        df_cr['eval'] = df_cr['eval'].astype(int)
+
+        df_cr = df_cr.groupby(['ecode', 'ename'], as_index=False).sum()
+        #df_cr['ev_index'] = df_cr['ecode'] +','+ df_cr['ename']
+        #df_cr.drop(['ecode'],inplace=True,axis=1)
+        #df_cr.drop(['ename'],inplace=True,axis=1)
+        #df_cr = df_cr.set_index('ev_index')
+        sum_cr = df_cr['eval'].sum()
+        df_cr['eval'] = round(df_cr['eval']/sum_cr, 3)
+        
+        return df_cr.to_json()
+
     # to insert data - hdm_evaluation / result_fa
     def proc_result_fa(self):
         hdm_str_cr = self.hdm_dic['cr']
@@ -161,3 +179,13 @@ class HdmEvalCalc:
         pdf_al.columns = fa_list
         return pdf_al.to_json()
 
+    def proc_incon_json(self):
+        inc_str = self.eval_dic['inc']
+        inc_list = self.make_list(inc_str)
+        print("inc_list:",inc_list)
+        df_incon = pd.DataFrame(inc_list)
+        print("df_incon:",df_incon)
+        df_incon.columns = ['ecode', 'incon']
+        df_incon['incon'] = df_incon['incon'].astype(float)
+        return df_incon.to_json()
+        
