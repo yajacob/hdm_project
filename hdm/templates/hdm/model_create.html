@@ -69,23 +69,18 @@ function fnAddFactors() {
 		return;
 	}
 	
-	var arr_criteria = criteria.split(",");
 	$(".div_factors").hide();
 	
-	// remove duplication
-	var arr_criteria = arr_criteria.reduce(function(a,b){
-		if (a.indexOf(b) < 0 ) a.push(b);
-		return a;
-	  },[]);
-	
-	var hdm_criteria_count = 0;
-	for(i=0, j=1; i<arr_criteria.length; i++) {
-		if(arr_criteria[i].trim() == "") continue;
-		
-		$("#label_fector"+j).text("Factors #"+j+": "+arr_criteria[i].trim());
+	// check duplication of alternatives
+	criteria_new = fnCheckDup("Criteria", criteria);
+	$("#hdm_criteria").val(criteria_new);
+
+	var arr_criteria_new = criteria_new.split(",");
+	var hdm_criteria_count = arr_criteria_new.length;
+	for(i=0, j=1; i<arr_criteria_new.length; i++) {
+		$("#label_fector"+j).text("Factors #"+j+": "+arr_criteria_new[i]);
 		$("#div_factor"+j).show();
 		j++;
-		hdm_criteria_count = j;
 	}
 	$("#hdm_criteria_count").val(hdm_criteria_count);
 	$("#hdm_objective").val()
@@ -97,10 +92,40 @@ function fnTest() {
 	$("#hdm_objective").val("Buy MP3 Player");
 	$("#hdm_criteria").val("Color, Memory, Delivery");
 	fnAddFactors();
-	$("#hdm_factor1").val("Pink, Blue, Yellow");
-	$("#hdm_factor2").val("16GB, 32GB, 64GB, 128GB");
+	$("#hdm_factor1").val("Pink, Blue, Yellow, Yellow");
+	$("#hdm_factor2").val("16GB, 32GB, 64GB, 128GB, 128GB");
 	$("#hdm_factor3").val("USPS, UPS, FedEx");
-	$("#hdm_alternatives").val("Model 1, Model 2, Model 3, Model 4");
+	$("#hdm_alternatives").val("Model 1, Model 3, Model 2, Model 3, Model 4");
+}
+
+function fnCheckDup(title, items) {
+	var arr_temp = items.split(",");
+	var arr_temp_new = new Array();
+	var result = "";
+	var dup_count = 0;
+	
+	for(let i=0; i<arr_temp.length; i++) {
+		var temp_item = arr_temp[i].trim();
+		if(temp_item == "") continue;
+
+		var dup_flag = false;
+		for(let j=0; j<arr_temp_new.length; j++) {
+			if(arr_temp_new[j] == temp_item) {
+				dup_flag = true;
+				dup_count++;
+			}
+		}
+		if(!dup_flag) {
+			arr_temp_new.push(temp_item);
+			if(result != "") result += ",";
+			result += temp_item;
+		}
+	}
+
+	if(dup_count > 0) {
+		alert("The duplicated item(s) in "+title+" will be removed.");
+	}	
+	return result;
 }
 
 function fnSubmit() {
@@ -108,13 +133,25 @@ function fnSubmit() {
 	var hdm_objective = $("#hdm_objective").val();
 	var hdm_criteria  = $("#hdm_criteria").val();
 	var hdm_factors   = "";
-	var hdm_alternatives = $("#hdm_alternatives").val();
+	
 	var hdm_criteria_count =  $("#hdm_criteria_count").val();
-	for(i=1; i <= hdm_criteria_count; i++) {
+	alert("hdm_criteria_count:"+hdm_criteria_count);
+	for(let i=1; i <= hdm_criteria_count; i++) {
 		if(i>1) hdm_factors += "|";
-		hdm_factors += $("#hdm_factor"+i).val();
+	
+		// check duplication of Factors
+		var temp_factor = $("#hdm_factor"+i).val();
+		var temp_factor_new = fnCheckDup("Factors #"+i, temp_factor);
+		
+		hdm_factors += temp_factor_new;
 	}
 	$("#hdm_factors").val(hdm_factors);
+
+	// check duplication of alternatives
+	var hdm_alternatives = $("#hdm_alternatives").val();
+	var alternatives_new = fnCheckDup("Alternatives", hdm_alternatives);
+	$("#hdm_alternatives").val(alternatives_new);
+
 	frm.submit();
 }
 
@@ -148,8 +185,8 @@ $("#upload_file").fileinput({'showUpload':false, 'previewFileType':'any'});
 </script>
 
 <ul class="nav nav-tabs">
-  <li id="tab1" role="presentation" class="active"><a href="javascript:fnActiveTab(1);">Manual Design</a></li>
-  <li id="tab2" role="presentation"><a href="javascript:fnActiveTab(2);">Upload CSV</a></li>
+  <li id="tab1" role="presentation" class="active"><a href="javascript:fnActiveTab(1);">Model Design</a></li>
+  <!--li id="tab2" role="presentation"><a href="javascript:fnActiveTab(2);">Upload CSV</a></li-->
 </ul>
 
 <form name='hdm_form' id='hdm_form' method='POST'>{% csrf_token %}

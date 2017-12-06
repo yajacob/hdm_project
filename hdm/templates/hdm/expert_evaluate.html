@@ -38,7 +38,12 @@ function fnSubmitEvaluation() {
 }
 
 //For Saving Evaluated Item
+var evalSaveFlag = false;
 function fnEvaluationSave() {
+	// To prevent duplicate save
+	if(evalSaveFlag) return;
+	evalSaveFlag = true;
+	
 	var cur_eval_item = $('#cur_eval_item').val();
 	var cur_eval_cnt = $('#cur_eval_item_cnt').val();
 	var gr_code = "";
@@ -78,6 +83,7 @@ function fnEvaluationSave() {
 		return;
 	}
 	
+	$('html,body').css('cursor','Wait');
 	//ajax_param['eval_data'] = eval_data;
 	$.ajax({
         type: "GET",
@@ -93,12 +99,14 @@ function fnEvaluationSave() {
 			console.log("Error:"+e.message);
     	}
 	});
-
+	evalSaveFlag = false;
 }
 
 function fnProcJson(inconsistency, cur_eval_item, gr_code, eval_data) {
+	$('html,body').css('cursor','default');
    	if (inconsistency > 0.3) {
-   		if(!confirm(("The inconsistency of the values you entered is "+inconsistency+".\n\nDo you want to save?"))) {
+   		let inc_val_p2 = Math.round(parseFloat(inconsistency)*100)/100;
+   		if(!confirm(("The inconsistency of the values you entered is "+inc_val_p2+".\n\nDo you want to save?"))) {
    			return;
    		}
    	}
@@ -132,7 +140,7 @@ function fnProcJson(inconsistency, cur_eval_item, gr_code, eval_data) {
 	
 	// Reset Slides
 	fnResetSlide();
-
+	evalSaveFlag = false;
 }
 
 </script>

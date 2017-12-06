@@ -294,7 +294,12 @@ def hdm_model_result(request, hdm_id, exp_id):
 
         # Add expert column
         temp_df['Experts'] = ev['expert_fname'] + ' ' + ev['expert_lname']
-        inconsistency = "Max: " + str(list(df_eval_incon.max())[1])
+        incon_max = round(list(df_eval_incon.max())[1], 4)
+        incon_mean = round(list(df_eval_incon.mean())[0], 4)
+        
+        inconsistency = ""
+        inconsistency += "Max: " + str(incon_max)
+        inconsistency += ", Mean: " + str(incon_mean)
         temp_df['Inconsistency'] = inconsistency
         
         total_df_al = pd.concat([total_df_al, temp_df])

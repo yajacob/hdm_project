@@ -38,8 +38,8 @@ class HdmEvalCalc:
         eval_cr = pd.DataFrame(self.make_list(self.eval_dic['cr']))
         eval_cr.drop(0, inplace=True, axis=1)
         eval_cr.columns = ['Criteria', 'Value']
-        eval_cr.sort(['Criteria', 'Value'])
-        return eval_cr.to_json()
+        #eval_cr.sort(['Criteria', 'Value'])
+        return eval_cr.to_json(orient='records')
 
     # Experts' Factors evaluation to JSON
     def proc_eval_fa(self):
@@ -57,9 +57,10 @@ class HdmEvalCalc:
         df_fa['eval'] = df_fa['eval'].astype(int)
         df_fa = pd.merge(df_fa, df_cr, how="inner", left_on="cr", right_on="cr")
         df_fa = df_fa[['ename_y', 'ename_x', 'eval']]
-        df_fa.rename(columns={"ename_y":"Criteria", "ename_x":"Factors", "eval":"Value"}, inplace = True)
+        #df_fa.rename(columns={"ename_y":"Criteria", "ename_x":"Factors", "eval":"Value"}, inplace = True)
+        df_fa.columns = ['Criteria', 'Factors', 'Value']
 
-        return df_fa.to_json()
+        return df_fa.to_json(orient='records')
 
     # Experts' Alternatives evaluation to JSON
     def proc_eval_al(self):
@@ -90,7 +91,7 @@ class HdmEvalCalc:
         df_al = df_al[['ename_y', 'ename', 'ename_x', 'eval']]
         df_al.rename(columns={"ename_y":"Criteria", "ename":"Factors", "ename_x":"Alternatives", "eval":"Value"}, inplace = True)
         
-        return df_al.to_json()
+        return df_al.to_json(orient='records')
     
     # to insert data - hdm_evaluation / result_cr
     def proc_result_cr_bak(self):
@@ -184,7 +185,7 @@ class HdmEvalCalc:
             fa_list.append(i)
 
         pdf_fa.columns = fa_list
-        return pdf_fa.to_json()
+        return pdf_fa.to_json(orient='records')
 
     # to insert data - hdm_evaluation / result_al
     def proc_result_al(self):
