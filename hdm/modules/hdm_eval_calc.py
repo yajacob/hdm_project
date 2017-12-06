@@ -114,10 +114,10 @@ class HdmEvalCalc:
         #str_cr = 'CR10,Color,24|CR20,Memory,76|CR10,Color,72|CR30,Delivery,28|CR20,Memory,37|CR30,Delivery,63'
         cr_list = self.make_list(self.eval_dic['cr'])
         df_cr = pd.DataFrame(cr_list)
-        df_cr.columns = ['ecode', 'ename', 'eval']
+        df_cr.columns = ['ecode', '*Ename', 'eval']
         df_cr['eval'] = df_cr['eval'].astype(int)
 
-        df_cr = df_cr.groupby(['ecode', 'ename'], as_index=False).sum()
+        df_cr = df_cr.groupby(['ecode', '*Ename'], as_index=False).sum()
         #df_cr['ev_index'] = df_cr['ecode'] +','+ df_cr['ename']
         #df_cr.drop(['ecode'],inplace=True,axis=1)
         #df_cr.drop(['ename'],inplace=True,axis=1)
@@ -132,14 +132,14 @@ class HdmEvalCalc:
         hdm_str_cr = self.hdm_dic['cr']
         fa_list = self.make_list(self.eval_dic['fa'])
         df_fa = pd.DataFrame(fa_list)
-        df_fa.columns = ['ecode', 'ename', 'eval']
-        df_fa['ename'] = df_fa['ecode'] + df_fa['ename']
+        df_fa.columns = ['ecode', '*Ename', 'eval']
+        df_fa['*Ename'] = df_fa['ecode'] + df_fa['*Ename']
         #df_fa = df_fa.sort_values(by=['ecode'])
         df_fa['cr'] = df_fa['ecode'].str[-2]
         df_fa['fa'] = df_fa['ecode'].str[-1]
         df_fa['eval'] = df_fa['eval'].astype(int)
 
-        pdf_fa = pd.pivot_table(df_fa, index=['ename'], columns=['cr'], values='eval', aggfunc=np.sum).fillna(0)
+        pdf_fa = pd.pivot_table(df_fa, index=['*Ename'], columns=['cr'], values='eval', aggfunc=np.sum).fillna(0)
         sum_fa = pdf_fa.sum()
 
         for idx, col in pdf_fa.iteritems():
@@ -153,9 +153,7 @@ class HdmEvalCalc:
         
         pdf_fa['ecode'] = pdf_fa.index.values
         pdf_fa['ecode'] = pdf_fa['ecode'].str[:4]
-        pdf_fa['ename'] = pdf_fa.index.str[4:]
-        print("*"*80)
-        print("pdf_fa:", pdf_fa)
+        pdf_fa['*Ename'] = pdf_fa.index.str[4:]
 
         return pdf_fa.to_json()
 
@@ -216,9 +214,7 @@ class HdmEvalCalc:
     def proc_incon_json(self):
         inc_str = self.eval_dic['inc']
         inc_list = self.make_list(inc_str)
-        print("inc_list:",inc_list)
         df_incon = pd.DataFrame(inc_list)
-        print("df_incon:",df_incon)
         df_incon.columns = ['ecode', 'incon']
         df_incon['incon'] = df_incon['incon'].astype(float)
         return df_incon.to_json()

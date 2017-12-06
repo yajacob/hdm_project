@@ -207,7 +207,7 @@ def hdm_model_result(request, hdm_id, exp_id):
     df_all_eval_incon = pd.DataFrame()
     
     list_col_keys = []
-    incon_list = []
+    incon_dic = {}
 
     for ev in eval_list:
         exp_no = ev['expert_no']
@@ -246,6 +246,9 @@ def hdm_model_result(request, hdm_id, exp_id):
         for key, val in dic_sum.items():
             temp += "['%s', %.2f]," % (key, val)
         ev['chart_al'] = "[%s]" % temp
+        
+        # 3.0. incon. for object
+        ev['incon_cr00'] = round(df_eval_incon.to_dict()['incon'][0], 4)
 
         # 3.1. left join with result_cr and eval_incon  
         df_result_cr = pd.read_json(ev['result_cr'])
