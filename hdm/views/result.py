@@ -203,11 +203,11 @@ def hdm_model_result(request, hdm_id, exp_id):
     main_df_fa = pd.DataFrame()
     main_df_al = pd.DataFrame()
     total_df_al= pd.DataFrame()
+    disagree_df_al= pd.DataFrame()
     total_df_al_chart = pd.DataFrame()
     df_all_eval_incon = pd.DataFrame()
     
     list_col_keys = []
-    incon_dic = {}
 
     for ev in eval_list:
         exp_no = ev['expert_no']
@@ -283,17 +283,23 @@ def hdm_model_result(request, hdm_id, exp_id):
         # Calculating for Main Alternative
         al_cal = HdmResultCalc(hdm_id)
         al_result_dic = al_cal.proc_total_result_al(hdm_id, exp_no)
+        print("*"*80)
+        print(al_result_dic)
         
         # for chart data
         temp_df_al_chart = pd.DataFrame([al_result_dic], columns=al_result_dic.keys())
         total_df_al_chart = pd.concat([total_df_al_chart, temp_df_al_chart])
         
         temp_df = pd.DataFrame([al_result_dic], columns=al_result_dic.keys())
+        al_len = len(al_result_dic)
 
         for key in list(temp_df.columns.values):
             temp_df[key] = temp_df[key].astype(float).fillna(0.0)
             temp_df[key] =  temp_df[key] / 100
             list_col_keys.append(al_result_dic.keys())
+
+        # for disagreement
+        disagree_df_al = pd.concat([disagree_df_al, temp_df])
 
         # Add expert column
         temp_df['Experts'] = ev['expert_fname'] + ' ' + ev['expert_lname']
@@ -335,6 +341,12 @@ def hdm_model_result(request, hdm_id, exp_id):
     total_df_al.loc['Max']  = total_df_al.max()
     total_df_al.loc['Std. Deviation'] = total_df_al.std()
     
+    # disagreement
+    disagree_val = round(np.mean(list(disagree_df_al.std())), 4)
+    temp_disag_list = [''] * al_len
+    temp_disag_list.append(disagree_val)
+    total_df_al.loc['Disagreement'] = temp_disag_list
+
     result_cal = HdmResultCalc(hdm_id)
     main_result_cr = result_cal.proc_result_main_cr(main_df_cr)
     main_result_fa = result_cal.proc_result_main_fa(main_df_fa)
@@ -353,9 +365,6 @@ def hdm_model_result(request, hdm_id, exp_id):
     main_result_cr_html = main_result_cr.to_html()
     main_result_fa_html = main_result_fa.to_html()
     main_result_al_html = main_result_al.to_html()
-    
-    #print("*"*80)
-    #print("total_df_al:\n", total_df_al)
     
     total_df_al_html    = total_df_al.to_html()
 

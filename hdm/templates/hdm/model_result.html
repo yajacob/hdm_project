@@ -93,11 +93,16 @@ $(document).ready(function() {
 	// hide index column
 	$('.main_al td:nth-child(1),.main_al th:nth-child(1)').hide();
 	
+	$('table tr th').css("backgroundColor","#f7edd9");
+	
 	// set tr background
 	$('.main_al tr').each(function() {
 	    var idx_name = $(this).find("td:first").html();
 	    if(idx_name == "Mean" || idx_name == "Min" || idx_name == "Max" || idx_name == "Std. Deviation" ) {
 	    	$(this).css("background", "#ccc");
+	    }
+	    else if(idx_name == "Disagreement") {
+	    	$(this).css("background", "#ffe286");
 	    }
 	});
 	
@@ -239,9 +244,10 @@ function fnResultDelete() {
 			<div class="panel panel-danger">
 				<div class="panel-heading"><b>Result</b></div>
 				<div class="panel-body">
+		<div class="row">
 	      <!-- left panel -->
 	      <div class="col-md-7 text-md-left">
-	<div class="alert alert-success" role="alert">
+	<div class="alert alert-info" role="alert">
 		<h5><b>Total Expert's Number:</b> {{ eval_all_list|length }}</h5> 
 		<h5><b>Last Evaluated Date:</b> {{ eval_all_list.0.eval_date }}</h5>
 		<h5><b>Current Experts:</b> ({{ eval_list|length }})  
@@ -249,7 +255,7 @@ function fnResultDelete() {
     	{{ ev.expert_fname }} {{ ev.expert_lname }}, 
 	{% endfor %}</h5>
 	</div>
-	<div class="alert alert-info" role="alert">
+	<div class="alert alert-success" role="alert">
 		<div class="col-md-4">
 			<h5><b>Choose Expert(s)</b></h5>
 			<button type="button" class="btn btn-success" onclick="location.reload();" style="width:120px;margin-top:10px;" title="Reload this result page."><span class="glyphicon glyphicon-refresh" aria-hidden="true" style="margin-right:5px;"></span>Reload</button>
@@ -269,10 +275,6 @@ function fnResultDelete() {
 			<button type="button" class="btn btn-warning" onclick="fnResultDelete();" style="width:125px;margin-top:10px;" title="Select expert(s) for delete the expert(s)."><span class="glyphicon glyphicon-trash" aria-hidden="true" style="margin-right:5px;"></span>Del Response</button>
 		</div>
 	</div>
-	<div class="form-group">
-	  <label for="eval_ob">Result of the model:</label>
-	  <div>{{ total_df_al|safe }}</div>
-	</div>
 		</div>
 	    <!-- right panel -->
 		<div class="mx-auto col-sm-8 col-md-5 hide-sm Box bg-gray-light pt-4 pb-5">
@@ -280,6 +282,15 @@ function fnResultDelete() {
 				<div class="panel-heading"><b>Result Chart - Alternatives</b></div>
 				<div class="panel-body">
 					<div class="chart" id="piechart_al0" style="width: 100%; height: 220px;"></div>
+				</div>
+			</div>
+		</div>
+		</div>
+		<div class="row" style="padding:15px;">
+	<div class="panel panel-info">
+		<div class="panel-heading"><b>Result of the model:</b></div>
+			<div class="panel-body">
+			{{ total_df_al|safe }}
 				</div>
 			</div>
 		</div>
