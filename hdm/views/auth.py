@@ -21,7 +21,7 @@ def signup(request):
     else:
         #form = UserCreationForm()
         form = SignupForm()
-    return render(request, 'accounts/signup.html', {'form': form})
+    return render(request, 'auth/signup.html', {'form': form})
 
 # Signup from Home
 def signupHome(request):
@@ -34,7 +34,7 @@ def signupHome(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('/accounts/login/')
+            return redirect('/auth/login/')
     else:
         #form = UserCreationForm()
         form = SignupForm()
@@ -52,6 +52,6 @@ def change_password(request):
             messages.error(request, 'Please correct the error below.')
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'accounts/change_password.html', {
+    return render(request, 'auth/change_password.html', {
         'form': form
     })

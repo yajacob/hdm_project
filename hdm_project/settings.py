@@ -125,8 +125,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 AUTH_PROFILE_MODULE = 'accounts.MyProfile'  
 LOGIN_REDIRECT_URL = '/'  
-LOGIN_URL = '/accounts/signin/'  
-LOGOUT_URL = '/accounts/signout/'
+LOGIN_URL = '/auth/signin/'  
+LOGOUT_URL = '/auth/signout/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

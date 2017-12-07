@@ -49,7 +49,7 @@ def model_str_clean(stype, mstr):
          
 
 
-@login_required(login_url="/accounts/login/")
+@login_required(login_url="/auth/login/")
 def hdm_model_create(request):
     if request.method == "POST":
         form = HdmForm(request.POST)
@@ -94,7 +94,7 @@ def uploadCSVfile(request):
 
 
 
-@login_required(login_url="/accounts/login/")
+@login_required(login_url="/auth/login/")
 def hdm_model_update(request, hdm_id):
     # Update Process
     if request.method == "POST":
@@ -125,7 +125,7 @@ def hdm_model_update(request, hdm_id):
         range12 = list(range(1, 13))
         return render(request, 'hdm/model_update.html', {'range12': range12, 'hdm': hdm, 'ds':ds, 'hdm_fa':hdm_fa, 'hdm_id':hdm_id})
 
-@login_required(login_url="/accounts/login/")
+@login_required(login_url="/auth/login/")
 def hdm_model_manage(request):
     if request.user.is_staff == True:
         query = """SELECT a.*, strftime('%m/%d/%Y %H:%M', a.created_date) cre_date,
@@ -149,7 +149,7 @@ def hdm_model_manage(request):
     hdm_domain = "http://" + request.get_host()
     return render(request, 'hdm/model_manage.html', {'hdm_list': hdm_list}, {'hdm_domain':hdm_domain})
 
-@login_required(login_url="/accounts/login/")
+@login_required(login_url="/auth/login/")
 def hdm_model_view(request, hdm_id):
     try:
         hdm_dict = getHdmById(request, hdm_id)
@@ -166,7 +166,7 @@ def hdm_model_view(request, hdm_id):
 
     return render(request, 'hdm/model_view.html', {'ds':ds, 'hdm_al':hdm_al, 'hdm':hdm_dict, 'eval_cnt':eval_cnt})
 
-@login_required(login_url="/accounts/login/")
+@login_required(login_url="/auth/login/")
 def hdm_model_diagram(request, hdm_id):
     hdm = Hdm.objects.get(id__iexact=hdm_id)
     ds = ExpertDiagramScript(hdm)
@@ -174,7 +174,7 @@ def hdm_model_diagram(request, hdm_id):
     hdm_al = hdm.hdm_alternatives.split(",")
     return render(request, 'hdm/model_diagram.html', {'ds':ds, 'hdm_al':hdm_al})
         
-@login_required(login_url="/accounts/login/")
+@login_required(login_url="/auth/login/")
 def hdm_model_delete(request, hdm_uuid):
     hdm_id = getIDbyUUID(hdm_uuid)
     if hdm_id is None:

@@ -34,7 +34,7 @@ def hdm_home(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('/accounts/login/')
+            return redirect('/auth/login/')
     else:
         cursor = connection.cursor()
         if request.user.is_staff == True:
@@ -66,4 +66,4 @@ def hdm_home(request):
 
 
 def help_manual(request):
-    return render(request, 'help/manual.html', {})
+    return render(request, 'home/manual.html', {})

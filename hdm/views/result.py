@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import json
 
-@login_required(login_url="/accounts/login/")
+@login_required(login_url="/auth/login/")
 def hdm_result_csv_download(request, hdm_id, exp_id):
     cursor = connection.cursor()
     
@@ -112,7 +112,7 @@ def hdm_result_csv_download(request, hdm_id, exp_id):
     
     return response
 
-@login_required(login_url="/accounts/login/")
+@login_required(login_url="/auth/login/")
 def hdm_result_json_download(request, hdm_id, exp_id):
     cursor = connection.cursor()
     
@@ -166,7 +166,7 @@ def make_incon_list(incon_data):
         incon_list.append(float(sub_list[1]))
     return incon_list
 
-@login_required(login_url="/accounts/login/")
+@login_required(login_url="/auth/login/")
 def hdm_model_result(request, hdm_id, exp_id):
     # pandas setting for float number
     pd.options.display.float_format = '{:.4f}'.format
@@ -378,7 +378,7 @@ def hdm_model_result(request, hdm_id, exp_id):
                    'total_df_al':total_df_al_html, 'main_chart_cr':main_chart_cr, 'main_chart_al':main_chart_al})
 
 
-@login_required(login_url="/accounts/login/")
+@login_required(login_url="/auth/login/")
 def hdm_expert_delete(request, hdm_id, exp_id):
     cursor = connection.cursor()
 

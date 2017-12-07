@@ -42,7 +42,7 @@ function validateEmail(email)
 			<div class="panel panel-danger">
 				<div class="panel-heading">Welcome <b>{{ request.user.username }}</b></div>
 				<div class="panel-body">
-				Welcome message...
+				Welcome to HDM Designer...
 				</div>
 			</div>
 			<div class="panel panel-info">
@@ -67,7 +67,11 @@ function validateEmail(email)
     {% endfor %}
 {% else %}
 			<tr>
-				<td colspan="3" style="height:100px; text-align:center; vertical-align:middle;"><h4>Create your new HDM!</h4></td>
+				<td colspan="3" style="height:100px; text-align:center; vertical-align:middle;">
+					<h5>There is no model design created by you.</h5>
+					<h4>Create your new HDM!</h4>
+					<button type="button" class="btn btn-success" onclick="location.href='/hdm/model_create/'" style="width:120px;margin-top:10px;"><span class="glyphicon glyphicon-edit" aria-hidden="true" style="margin-right:5px;"></span>Create</button>
+					</td>
 			</tr>
 {% endif %}
 		</tbody>
@@ -78,10 +82,10 @@ function validateEmail(email)
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 					<h4 class="hs_cos_wrapper form-title" data-hs-cos-general-type="widget_field" data-hs-cos-type="text">
-					Sign Up for Free HDM Designer</h4>
+					Sign Up for HDM Designer</h4>
 				</div>
 				<div class="panel-body">
-		<form method="post" id="form_signup" action="/accounts/signup/"style="padding:0 40px 0 40px;">{% csrf_token %}
+		<form method="post" id="form_signup" action="/auth/signup/"style="padding:0 40px 0 40px;">{% csrf_token %}
 				<p>
 				<label for="id_username">Username:</label><br>
 				<input autofocus="" id="id_username" maxlength="150" name="username" type="text" required="" title="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.">
