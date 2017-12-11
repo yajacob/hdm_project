@@ -3,7 +3,7 @@
 {% block content %}
 <script>
 function copyURLClipBoard(exp_url){
-	url = "http://127.0.0.1:8000" + exp_url; 
+	url = "{{ request.get_host }}" + exp_url; 
 	copyClipBoard(url);
 }
 </script>
