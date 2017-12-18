@@ -14,8 +14,8 @@ class HdmInconsistency:
     
     def step1_matrix_a1(self, resp_data):
         temp_list = resp_data.split("|")
-        fact_size_dic = {30:6, 20:5, 12:4, 6:3}
-        row_size_dic = {6:15, 5:10, 4:6, 3:3}
+        fact_size_dic = {72:9, 56:8, 42:7, 30:6, 20:5, 12:4, 6:3}
+        row_size_dic = {9:36, 8:28, 7:21, 6:15, 5:10, 4:6, 3:3}
         matrix_size = fact_size_dic[len(temp_list)]
         self.matrix_size = matrix_size
         #print("matrix_size:", matrix_size)
@@ -43,14 +43,8 @@ class HdmInconsistency:
     def step1_matrix_a2(self, matrix_pair):
         matrix_size = self.matrix_size
         idx_list = []
-        if matrix_size == 3:
-            idx_list = [0, 1, 2]
-        elif matrix_size == 4:
-            idx_list = [0, 1, 2, 3]
-        elif matrix_size == 5:
-            idx_list = [0, 1, 2, 3, 4]
-        elif matrix_size == 6:
-            idx_list = [0, 1, 2, 3, 4, 5]
+        for idx in range(matrix_size):
+            idx_list.append(idx)
         pair_size = len(matrix_pair)
     
         matrix = [[0 for col in range(matrix_size)] for row in range(matrix_size)] 
@@ -107,10 +101,35 @@ class HdmInconsistency:
         matrix_size = self.matrix_size
         norm_val = [0 for i in range(matrix_size)]
 
-        if matrix_size == 6:
+        if matrix_size == 9:
+            norm_val[idx_list[8]] = 1
+            norm_val[idx_list[7]] = self.tround(matrix_mean[7], 3)
+            norm_val[idx_list[6]] = self.tround(matrix_mean[7] * matrix_mean[6], 3)
+            norm_val[idx_list[5]] = self.tround(matrix_mean[6] * matrix_mean[5], 3)
+            norm_val[idx_list[4]] = self.tround(matrix_mean[5] * matrix_mean[4], 3)
+            norm_val[idx_list[3]] = self.tround(matrix_mean[4] * matrix_mean[3], 3)
+            norm_val[idx_list[2]] = self.tround(matrix_mean[3] * matrix_mean[2], 3)
+            norm_val[idx_list[1]] = self.tround(norm_val[idx_list[2]] * matrix_mean[1], 3)
+        elif matrix_size == 8:
+            norm_val[idx_list[7]] = 1
+            norm_val[idx_list[6]] = self.tround(matrix_mean[6], 3)
+            norm_val[idx_list[5]] = self.tround(matrix_mean[6] * matrix_mean[5], 3)
+            norm_val[idx_list[4]] = self.tround(matrix_mean[5] * matrix_mean[4], 3)
+            norm_val[idx_list[3]] = self.tround(matrix_mean[4] * matrix_mean[3], 3)
+            norm_val[idx_list[2]] = self.tround(matrix_mean[3] * matrix_mean[2], 3)
+            norm_val[idx_list[1]] = self.tround(norm_val[idx_list[2]] * matrix_mean[1], 3)
+        elif matrix_size == 7:
+            norm_val[idx_list[6]] = 1
+            norm_val[idx_list[5]] = self.tround(matrix_mean[5], 3)
+            norm_val[idx_list[4]] = self.tround(matrix_mean[5] * matrix_mean[4], 3)
+            norm_val[idx_list[3]] = self.tround(matrix_mean[4] * matrix_mean[3], 3)
+            norm_val[idx_list[2]] = self.tround(matrix_mean[3] * matrix_mean[2], 3)
+            norm_val[idx_list[1]] = self.tround(norm_val[idx_list[2]] * matrix_mean[1], 3)
+        elif matrix_size == 6:
             norm_val[idx_list[5]] = 1
             norm_val[idx_list[4]] = self.tround(matrix_mean[4], 3)
             norm_val[idx_list[3]] = self.tround(matrix_mean[4] * matrix_mean[3], 3)
+            norm_val[idx_list[2]] = self.tround(matrix_mean[3] * matrix_mean[2], 3)
             norm_val[idx_list[1]] = self.tround(norm_val[idx_list[2]] * matrix_mean[1], 3)
         elif matrix_size == 5:
             norm_val[idx_list[4]] = 1
@@ -142,91 +161,108 @@ class HdmInconsistency:
         matrix_a = self.step1_matrix_a2(matrix_pair)
         matrix_b = self.step2_matrix_b(matrix_a)
         matrix_size = self.matrix_size
+        #print("matrix_size:", matrix_size)
 
-        if matrix_size == 3:
-            for i in range(matrix_size):
-                for j in range(matrix_size):
-                    if i == j: continue
-                    for k in range(matrix_size):
-                        if i == k: continue
-                        if j == k: continue
+        for i in range(matrix_size):
+            for j in range(matrix_size):
+                if i == j: continue
+                for k in range(matrix_size):
+                    if i == k: continue
+                    if j == k: continue
+                    if matrix_size == 3:
                         idx_list = [i, j, k]
                         matrix_c = self.step3_matrix_c(matrix_b, idx_list)
                         matrix_mean = self.step4_mean_list(matrix_c)
                         norm_val = self.step5_normalize(matrix_mean, idx_list)
                         normalized_list.append(norm_val)
-                            
-        elif matrix_size == 4:
-            for i in range(matrix_size):
-                for j in range(matrix_size):
-                    if i == j: continue
-                    for k in range(matrix_size):
-                        if i == k: continue
-                        if j == k: continue
+                    if matrix_size > 3:
                         for l in range(matrix_size):
                             if i == l: continue
                             if j == l: continue
                             if k == l: continue
-                            idx_list = [i, j, k, l]
-                            matrix_c = self.step3_matrix_c(matrix_b, idx_list)
-                            matrix_mean = self.step4_mean_list(matrix_c)
-                            norm_val = self.step5_normalize(matrix_mean, idx_list)
-                            normalized_list.append(norm_val)
-
-        elif matrix_size == 5:
-            for i in range(matrix_size):
-                for j in range(matrix_size):
-                    if i == j: continue
-                    for k in range(matrix_size):
-                        if i == k: continue
-                        if j == k: continue
-                        for l in range(matrix_size):
-                            if i == l: continue
-                            if j == l: continue
-                            if k == l: continue
-                            for m in range(matrix_size):
-                                if i == m: continue
-                                if j == m: continue
-                                if k == m: continue
-                                if l == m: continue
-                                idx_list = [i, j, k, l, m]
+                            if matrix_size == 4:
+                                idx_list = [i, j, k, l]
                                 matrix_c = self.step3_matrix_c(matrix_b, idx_list)
                                 matrix_mean = self.step4_mean_list(matrix_c)
                                 norm_val = self.step5_normalize(matrix_mean, idx_list)
                                 normalized_list.append(norm_val)
-
-        elif matrix_size == 6:
-            for i in range(matrix_size):
-                for j in range(matrix_size):
-                    if i == j: continue
-                    for k in range(matrix_size):
-                        if i == k: continue
-                        if j == k: continue
-                        for l in range(matrix_size):
-                            if i == l: continue
-                            if j == l: continue
-                            if k == l: continue
-                            for m in range(matrix_size):
-                                if i == m: continue
-                                if j == m: continue
-                                if k == m: continue
-                                if l == m: continue
-                                for n in range(matrix_size):
-                                    if i == n: continue
-                                    if j == n: continue
-                                    if k == n: continue
-                                    if l == n: continue
-                                    if m == n: continue
-                                    idx_list = [i, j, k, l, m, n]
-                                    matrix_c = self.step3_matrix_c(matrix_b, idx_list)
-                                    matrix_mean = self.step4_mean_list(matrix_c)
-                                    norm_val = self.step5_normalize(matrix_mean, idx_list)
-                                    normalized_list.append(norm_val)
+                            if matrix_size > 4:
+                                for m in range(matrix_size):
+                                    if i == m: continue
+                                    if j == m: continue
+                                    if k == m: continue
+                                    if l == m: continue
+                                    if matrix_size == 5:
+                                        idx_list = [i, j, k, l, m]
+                                        matrix_c = self.step3_matrix_c(matrix_b, idx_list)
+                                        matrix_mean = self.step4_mean_list(matrix_c)
+                                        norm_val = self.step5_normalize(matrix_mean, idx_list)
+                                        normalized_list.append(norm_val)
+                                    if matrix_size > 5:
+                                        for n in range(matrix_size):
+                                            if i == n: continue
+                                            if j == n: continue
+                                            if k == n: continue
+                                            if l == n: continue
+                                            if m == n: continue
+                                            if matrix_size == 6:
+                                                idx_list = [i, j, k, l, m, n]
+                                                matrix_c = self.step3_matrix_c(matrix_b, idx_list)
+                                                matrix_mean = self.step4_mean_list(matrix_c)
+                                                norm_val = self.step5_normalize(matrix_mean, idx_list)
+                                                normalized_list.append(norm_val)
+                                            if matrix_size > 6:
+                                                for o in range(matrix_size):
+                                                    if i == o: continue
+                                                    if j == o: continue
+                                                    if k == o: continue
+                                                    if l == o: continue
+                                                    if m == o: continue
+                                                    if n == o: continue
+                                                    if matrix_size == 7:
+                                                        idx_list = [i, j, k, l, m, n, o]
+                                                        matrix_c = self.step3_matrix_c(matrix_b, idx_list)
+                                                        matrix_mean = self.step4_mean_list(matrix_c)
+                                                        norm_val = self.step5_normalize(matrix_mean, idx_list)
+                                                        normalized_list.append(norm_val)
+                                                    if matrix_size > 7:
+                                                        for p in range(matrix_size):
+                                                            if i == p: continue
+                                                            if j == p: continue
+                                                            if k == p: continue
+                                                            if l == p: continue
+                                                            if m == p: continue
+                                                            if n == p: continue
+                                                            if o == p: continue
+                                                            if matrix_size == 8:
+                                                                idx_list = [i, j, k, l, m, n, o, p]
+                                                                matrix_c = self.step3_matrix_c(matrix_b, idx_list)
+                                                                matrix_mean = self.step4_mean_list(matrix_c)
+                                                                norm_val = self.step5_normalize(matrix_mean, idx_list)
+                                                                normalized_list.append(norm_val)
+                                                            if matrix_size > 8:
+                                                                for q in range(matrix_size):
+                                                                    if i == q: continue
+                                                                    if j == q: continue
+                                                                    if k == q: continue
+                                                                    if l == q: continue
+                                                                    if m == q: continue
+                                                                    if n == q: continue
+                                                                    if o == q: continue
+                                                                    if p == q: continue
+                                                                    if matrix_size == 9:
+                                                                        idx_list = [i, j, k, l, m, n, o, p, q]
+                                                                        matrix_c = self.step3_matrix_c(matrix_b, idx_list)
+                                                                        matrix_mean = self.step4_mean_list(matrix_c)
+                                                                        norm_val = self.step5_normalize(matrix_mean, idx_list)
+                                                                        normalized_list.append(norm_val)
 
         df = pd.DataFrame(normalized_list)
+        #print("df:", df)
         
         #old_inconsistency = self.tround(df.std().mean(), 4) 
         new_inconsistency = self.tround(math.sqrt(df.var().sum()), 4)
+        #print("new_inconsistency:", new_inconsistency)
         return new_inconsistency
 
 

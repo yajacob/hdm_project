@@ -56,7 +56,6 @@ class HdmEvalCalc:
         df_fa['eval'] = df_fa['eval'].astype(int)
         df_fa = pd.merge(df_fa, df_cr, how="inner", left_on="cr", right_on="cr")
         df_fa = df_fa[['ename_y', 'ename_x', 'eval']]
-        #df_fa.rename(columns={"ename_y":"Criteria", "ename_x":"Factors", "eval":"Value"}, inplace = True)
         df_fa.columns = ['Criteria', 'Factors', 'Value']
 
         return df_fa.to_json(orient='records')

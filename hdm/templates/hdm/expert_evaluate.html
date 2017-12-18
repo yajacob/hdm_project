@@ -82,9 +82,12 @@ function fnEvaluationSave() {
 		fnProcJson(inconsistency, cur_eval_item, gr_code, eval_data);
 		return;
 	}
-	
+
+	if(cur_eval_cnt > 6) {
+		alert('Please wait. It takes some time to process this.');
+	}
+
 	$('html,body').css('cursor','Wait');
-	//ajax_param['eval_data'] = eval_data;
 	$.ajax({
         type: "GET",
 		dataType: "json",
