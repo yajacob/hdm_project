@@ -27,8 +27,8 @@ def hdm_expert_login(request, uuid):
             raise Http404
     
         hdm_al = hdm.hdm_alternatives.split(",")
-        range28 = list(range(1, 29))
-        return render(request, 'hdm/expert_evaluate.html', {'message':message, 'req_post':request.POST, 'uuid':uuid, 'hdm':hdm, 'ds':ds, 'hdm_al':hdm_al, 'range28':range28})
+        range36 = list(range(1, 37))
+        return render(request, 'hdm/expert_evaluate.html', {'message':message, 'req_post':request.POST, 'uuid':uuid, 'hdm':hdm, 'ds':ds, 'hdm_al':hdm_al, 'range36':range36})
     # login form
     else:
         try:
